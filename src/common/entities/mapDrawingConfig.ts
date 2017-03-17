@@ -9,6 +9,14 @@ export class MapDrawingConfig {
 
     mapWidth: number;
 
+    screenHeight: number;
+
+    screenWidth: number;
+
+    viewPortHeight: number;
+
+    viewPortWidth: number;
+
     movementSize: number;
 
     menuTileSize: number;
@@ -17,6 +25,10 @@ export class MapDrawingConfig {
         this.interval = data.fps / 1000;
         this.mapHeight = data.mapHeight;
         this.mapWidth = data.mapWidth;
+        this.screenHeight = data.screenHeight;
+        this.screenWidth = data.screenWidth;
+        this.viewPortHeight = data.viewPortHeight;
+        this.viewPortWidth = data.viewPortWidth;
         this.movementSize = data.movementSize;
         this.menuTileSize = data.menuTileSize;
     }

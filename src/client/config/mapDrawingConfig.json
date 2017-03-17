@@ -2,6 +2,10 @@
     "fps": 60,
     "mapHeight": 3360,
     "mapWidth": 3360,
+    "screenHeight": 528,
+    "screenWidth": 980,
+    "viewPortHeight": 528,
+    "viewPortWidth": 624,
     "movementSize": 48,
     "menuTileSize": 40
 }

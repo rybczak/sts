@@ -53,7 +53,6 @@ class Player {
             case enums_1.Direction.Up:
                 self.currentImage = "BasicPlayer5";
                 self.frameCounter = 2;
-                self.mirrorEdge = false;
                 break;
             case enums_1.Direction.Down:
                 self.currentImage = "BasicPlayer8";

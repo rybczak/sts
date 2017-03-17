@@ -177,33 +177,30 @@
                     <!-- /.panel -->
                 </div>
                 <div class="col-panel-map col-lg-8">
-                    <!--<div class="panel panel-default">
+                    <div class="panel panel-default">
                         <div class="panel-heading">
                             <i class="fa fa-map" aria-hidden="true"></i> {Nazwa lokacji} - {Nazwa Prowincji}
-                        </div>-->
-                    <!-- /.panel-heading -->
-                    <div style="position: relative">
-                        <div class="panel-body">
-                            <canvas id="guiCanvas" width="980" height="528" style="position: absolute; left: 0; top: 0; z-index: 2"></canvas>
-                            <canvas id="vpCanvas" width="624" height="528" style="position: absolute; left: 0; top: 0; z-index: 0"></canvas>
-                            <canvas id="playerCanvas" width="624" height="528" style="position: absolute; left: 0; top: 0; z-index: 1"></canvas>
                         </div>
-                        <!-- /.panel-body -->
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <canvas id="canvas" width="980" height="528"></canvas>
+                            <!-- /.panel-body -->
+                            <span>
+                                <a href="https://github.com/mozilla/BrowserQuest/tree/master/client/img">"Browserquest sprites and tiles"</a> by <a href="https://github.com/glecollinet">Guillaume Lecollinet</a> is licensed under <a href="https://creativecommons.org/licenses/by-sa/3.0">CC BY 3.0</a>
+                            </span>
+                        </div>
+
                     </div>
 
+                    <!-- /.map -->
                 </div>
-
-                <!-- /.map -->
             </div>
         </div>
-    </div>
-    <span>
-                        <a href="https://github.com/mozilla/BrowserQuest/tree/master/client/img">"Browserquest sprites and tiles"</a> by <a href="https://github.com/glecollinet">Guillaume Lecollinet</a> is licensed under <a href="https://creativecommons.org/licenses/by-sa/3.0">CC BY 3.0</a>
-                    </span>
 
 
-    <script type="text/javascript" src="js/vendor.bundle.js"></script>
-    <script type="text/javascript" src="js/bundle.js"></script>
+
+        <script type="text/javascript" src="js/vendor.bundle.js"></script>
+        <script type="text/javascript" src="js/bundle.js"></script>
 </body>
 
 </html>

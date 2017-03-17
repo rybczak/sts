@@ -12,25 +12,28 @@ var MapRenderer;
             this._config = new _entities_1.MapDrawingConfig(require("../config/mapDrawingConfig.json"));
             this.player = new _entities_1.Player(this._config.movementSize, this._config.mapHeight, this._config.mapWidth);
             this.playerOnMap = new _entities_1.MapPlayer(this.player.positionX, this.player.positionY);
-            this.wholeMapCanvas = document.createElement("canvas");
-            this.wholeMapCanvas.width = this._config.mapWidth;
-            this.wholeMapCanvas.height = this._config.mapHeight;
+            this.wholeMapCanvas = this.createCanvas(this._config.mapWidth, this._config.mapHeight);
             this.wholeMapContext = this.wholeMapCanvas.getContext("2d");
+            this.viewPortCanvas = this.createCanvas(this._config.viewPortWidth, this._config.viewPortHeight);
+            this.viewPortContext = this.viewPortCanvas.getContext("2d");
+            this.guiCanvas = this.createCanvas(this._config.screenWidth, this._config.screenHeight);
+            this.guiContext = this.guiCanvas.getContext("2d");
+            this.playerCanvas = this.createCanvas(this._config.viewPortWidth, this._config.viewPortHeight);
+            this.playerContext = this.playerCanvas.getContext("2d");
             new userController_1.MapController.UserController(this.player).registerArrowKeys();
         }
-        init(viewPortCanvas, guiCanvas, playerCanvas) {
+        createCanvas(width, height) {
+            var canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            return canvas;
+        }
+        init(canvas) {
             var self = this;
-            self.viewPortCanvas = viewPortCanvas;
-            self.viewPortContext = self.viewPortCanvas.getContext("2d");
-            self.guiCanvas = guiCanvas;
-            self.guiContext = self.guiCanvas.getContext("2d");
-            self.playerCanvas = playerCanvas;
-            self.playerContext = self.playerCanvas.getContext("2d");
+            self.screenCanvasContext = canvas.getContext("2d");
             self.elements = new assets_1.MapAssets.MapElements();
             Promise.all([self.elements.load()]).then(function () {
                 self._initialized = true;
-                self.drawMenu();
-                self.drawBorder();
                 self.drawWholeAreaMap();
                 requestAnimationFrame(() => self.drawArea());
             });
@@ -48,6 +51,12 @@ var MapRenderer;
                 if (timeDelta > self._config.interval) {
                     self.drawUserMap();
                     self.drawCharacter();
+                    self.drawMenu();
+                    self.drawBorder();
+                    self.screenCanvasContext.clearRect(0, 0, self._config.screenWidth, self._config.screenHeight);
+                    self.screenCanvasContext.drawImage(self.viewPortCanvas, 0, 0);
+                    self.screenCanvasContext.drawImage(self.playerCanvas, 0, 0);
+                    self.screenCanvasContext.drawImage(self.guiCanvas, 0, 0);
                 }
             }
         }

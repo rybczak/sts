@@ -28,7 +28,7 @@ export class Client {
 
 var client = new Client();
 var renderer = new r.MapRenderer.Renderer();
-renderer.init(<HTMLCanvasElement>document.getElementById("vpCanvas"), <HTMLCanvasElement>document.getElementById("guiCanvas"), <HTMLCanvasElement>document.getElementById("playerCanvas"));
+renderer.init(<HTMLCanvasElement>document.getElementById("canvas"));
 
 //to refactor
 $(".panel-actions-hide").on("click", function () {

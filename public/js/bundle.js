@@ -43,7 +43,7 @@ var Client = (function () {
 exports.Client = Client;
 var client = new Client();
 var renderer = new r.MapRenderer.Renderer();
-renderer.init(document.getElementById("vpCanvas"), document.getElementById("guiCanvas"), document.getElementById("playerCanvas"));
+renderer.init(document.getElementById("canvas"));
 $(".panel-actions-hide").on("click", function () {
     var el = $(".panel-actions-hide");
     if (el.hasClass("fa-minus")) {
@@ -136,25 +136,28 @@ var MapRenderer;
             this._config = new _entities_1.MapDrawingConfig(__webpack_require__(83));
             this.player = new _entities_1.Player(this._config.movementSize, this._config.mapHeight, this._config.mapWidth);
             this.playerOnMap = new _entities_1.MapPlayer(this.player.positionX, this.player.positionY);
-            this.wholeMapCanvas = document.createElement("canvas");
-            this.wholeMapCanvas.width = this._config.mapWidth;
-            this.wholeMapCanvas.height = this._config.mapHeight;
+            this.wholeMapCanvas = this.createCanvas(this._config.mapWidth, this._config.mapHeight);
             this.wholeMapContext = this.wholeMapCanvas.getContext("2d");
+            this.viewPortCanvas = this.createCanvas(this._config.viewPortWidth, this._config.viewPortHeight);
+            this.viewPortContext = this.viewPortCanvas.getContext("2d");
+            this.guiCanvas = this.createCanvas(this._config.screenWidth, this._config.screenHeight);
+            this.guiContext = this.guiCanvas.getContext("2d");
+            this.playerCanvas = this.createCanvas(this._config.viewPortWidth, this._config.viewPortHeight);
+            this.playerContext = this.playerCanvas.getContext("2d");
             new userController_1.MapController.UserController(this.player).registerArrowKeys();
         }
-        Renderer.prototype.init = function (viewPortCanvas, guiCanvas, playerCanvas) {
+        Renderer.prototype.createCanvas = function (width, height) {
+            var canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            return canvas;
+        };
+        Renderer.prototype.init = function (canvas) {
             var self = this;
-            self.viewPortCanvas = viewPortCanvas;
-            self.viewPortContext = self.viewPortCanvas.getContext("2d");
-            self.guiCanvas = guiCanvas;
-            self.guiContext = self.guiCanvas.getContext("2d");
-            self.playerCanvas = playerCanvas;
-            self.playerContext = self.playerCanvas.getContext("2d");
+            self.screenCanvasContext = canvas.getContext("2d");
             self.elements = new assets_1.MapAssets.MapElements();
             Promise.all([self.elements.load()]).then(function () {
                 self._initialized = true;
-                self.drawMenu();
-                self.drawBorder();
                 self.drawWholeAreaMap();
                 requestAnimationFrame(function () { return self.drawArea(); });
             });
@@ -172,6 +175,12 @@ var MapRenderer;
                 if (timeDelta > self._config.interval) {
                     self.drawUserMap();
                     self.drawCharacter();
+                    self.drawMenu();
+                    self.drawBorder();
+                    self.screenCanvasContext.clearRect(0, 0, self._config.screenWidth, self._config.screenHeight);
+                    self.screenCanvasContext.drawImage(self.viewPortCanvas, 0, 0);
+                    self.screenCanvasContext.drawImage(self.playerCanvas, 0, 0);
+                    self.screenCanvasContext.drawImage(self.guiCanvas, 0, 0);
                 }
             }
         };
@@ -383,6 +392,10 @@ var MapDrawingConfig = (function () {
         this.interval = data.fps / 1000;
         this.mapHeight = data.mapHeight;
         this.mapWidth = data.mapWidth;
+        this.screenHeight = data.screenHeight;
+        this.screenWidth = data.screenWidth;
+        this.viewPortHeight = data.viewPortHeight;
+        this.viewPortWidth = data.viewPortWidth;
         this.movementSize = data.movementSize;
         this.menuTileSize = data.menuTileSize;
     }
@@ -660,6 +673,10 @@ module.exports = {
 	"fps": 60,
 	"mapHeight": 3360,
 	"mapWidth": 3360,
+	"screenHeight": 528,
+	"screenWidth": 980,
+	"viewPortHeight": 528,
+	"viewPortWidth": 624,
 	"movementSize": 48,
 	"menuTileSize": 40
 };

@@ -7,6 +7,14 @@ export interface IMapDrawingConfigJson {
 
     mapWidth: number;
 
+    screenHeight: number;
+
+    screenWidth: number;
+
+    viewPortHeight: number;
+
+    viewPortWidth: number;
+
     movementSize: number;
 
     menuTileSize: number;

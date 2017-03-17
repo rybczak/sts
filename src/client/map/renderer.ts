@@ -12,6 +12,8 @@ export module MapRenderer {
         private _config: MapDrawingConfig;
 
         public elements: MapAssets.MapElements;
+
+        //move it somewhere, dynamic canvases
         public viewPortCanvas: HTMLCanvasElement;
         public viewPortContext: CanvasRenderingContext2D;
         public guiCanvas: HTMLCanvasElement;
@@ -20,6 +22,8 @@ export module MapRenderer {
         public playerContext: CanvasRenderingContext2D;
         public wholeMapCanvas: HTMLCanvasElement;
         public wholeMapContext: CanvasRenderingContext2D;
+
+        public screenCanvasContext: CanvasRenderingContext2D;
 
         //todo change to whole game data (abut map, player, other players)
         public player: Player;
@@ -30,30 +34,42 @@ export module MapRenderer {
             this.player = new Player(this._config.movementSize, this._config.mapHeight, this._config.mapWidth);
             this.playerOnMap = new MapPlayer(this.player.positionX, this.player.positionY);
 
-            this.wholeMapCanvas = document.createElement("canvas");
-            this.wholeMapCanvas.width = this._config.mapWidth;
-            this.wholeMapCanvas.height = this._config.mapHeight;
+            this.wholeMapCanvas = this.createCanvas(this._config.mapWidth, this._config.mapHeight);
             this.wholeMapContext = this.wholeMapCanvas.getContext("2d");
+
+            this.viewPortCanvas = this.createCanvas(this._config.viewPortWidth, this._config.viewPortHeight);
+            this.viewPortContext = this.viewPortCanvas.getContext("2d");
+
+            this.guiCanvas = this.createCanvas(this._config.screenWidth, this._config.screenHeight);
+            this.guiContext = this.guiCanvas.getContext("2d");
+
+            this.playerCanvas = this.createCanvas(this._config.viewPortWidth, this._config.viewPortHeight);
+            this.playerContext = this.playerCanvas.getContext("2d");
 
             new MapController.UserController(this.player).registerArrowKeys();
         }
 
-        init(viewPortCanvas: HTMLCanvasElement, guiCanvas: HTMLCanvasElement, playerCanvas: HTMLCanvasElement) {
+        createCanvas(width: number, height: number): HTMLCanvasElement {
+            var canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+
+            return canvas;
+        }
+
+        init(canvas: HTMLCanvasElement) {
             var self = this;
-            self.viewPortCanvas = viewPortCanvas;
-            self.viewPortContext = self.viewPortCanvas.getContext("2d");
-            self.guiCanvas = guiCanvas;
-            self.guiContext = self.guiCanvas.getContext("2d");
-            self.playerCanvas = playerCanvas;
-            self.playerContext = self.playerCanvas.getContext("2d");
+
+            self.screenCanvasContext = canvas.getContext("2d");
             self.elements = new MapAssets.MapElements();
 
             Promise.all([self.elements.load()]).then(function () {
                 self._initialized = true;
 
-                self.drawMenu();
-                self.drawBorder();
                 self.drawWholeAreaMap();
+
+                //virtual canvas to normal canvas
+
 
                 requestAnimationFrame(() => self.drawArea());
             });
@@ -77,6 +93,14 @@ export module MapRenderer {
                 if (timeDelta > self._config.interval) {
                     self.drawUserMap();
                     self.drawCharacter();
+                    self.drawMenu();
+                    self.drawBorder();
+
+                    //virtual canvas to normal canvas
+                    self.screenCanvasContext.clearRect(0, 0, self._config.screenWidth, self._config.screenHeight);
+                    self.screenCanvasContext.drawImage(self.viewPortCanvas, 0, 0);
+                    self.screenCanvasContext.drawImage(self.playerCanvas, 0, 0);
+                    self.screenCanvasContext.drawImage(self.guiCanvas, 0, 0);
                 }
             }
         }

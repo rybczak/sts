@@ -19,7 +19,7 @@ class Client {
 exports.Client = Client;
 var client = new Client();
 var renderer = new r.MapRenderer.Renderer();
-renderer.init(document.getElementById("vpCanvas"), document.getElementById("guiCanvas"), document.getElementById("playerCanvas"));
+renderer.init(document.getElementById("canvas"));
 $(".panel-actions-hide").on("click", function () {
     var el = $(".panel-actions-hide");
     if (el.hasClass("fa-minus")) {
