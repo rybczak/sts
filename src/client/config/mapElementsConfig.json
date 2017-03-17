@@ -1,0 +1,92 @@
+{
+    "sprites": [
+        {
+            "url": "img/barsheet.png",
+            "elements": [
+                {
+                    "name": "Background",
+                    "sourceXPoint": 750,
+                    "sourceYPoint": 155,
+                    "sourceHeight": 40,
+                    "sourceWidth": 40,
+                    "destinationTileHeight": 40,
+                    "destinationTileWidth": 40
+                },
+                {
+                    "name": "Health",
+                    "sourceXPoint": 0,
+                    "sourceYPoint": 50,
+                    "sourceHeight": 302,
+                    "sourceWidth": 40,
+                    "destinationTileHeight": 302,
+                    "destinationTileWidth": 40
+                }
+            ]
+        },
+        {
+            "url": "img/clotharmor.png",
+            "elements": [
+                {
+                    "name": "BasicPlayer",
+                    "sourceXPoint": 0,
+                    "sourceYPoint": 0,
+                    "sourceHeight": 960,
+                    "sourceWidth": 480,
+                    "destinationTileHeight": 96,
+                    "destinationTileWidth": 480
+                }
+            ]
+        },
+        {
+            "url": "img/leatherarmor.png",
+            "elements": [
+                {
+                    "name": "ExtendedPlayer",
+                    "sourceXPoint": 0,
+                    "sourceYPoint": 0,
+                    "sourceHeight": 864,
+                    "sourceWidth": 480,
+                    "destinationTileHeight": 95,
+                    "destinationTileWidth": 95
+                }
+            ]
+        },
+        {
+            "url": "img/tilesheet.png",
+            "elements": [
+                {
+                    "name": "Grass",
+                    "sourceXPoint": 528,
+                    "sourceYPoint": 192,
+                    "sourceHeight": 288,
+                    "sourceWidth": 288,
+                    "destinationTileHeight": 48,
+                    "destinationTileWidth": 48
+                },
+                {
+                    "name": "Dirt",
+                    "sourceXPoint": 384,
+                    "sourceYPoint": 1152,
+                    "sourceHeight": 288,
+                    "sourceWidth": 288,
+                    "destinationTileHeight": 48,
+                    "destinationTileWidth": 48
+                }
+            ]
+        },
+        {
+            "url": "img/border.png",
+            "elements": [
+                {
+                    "name": "Border",
+                    "sourceXPoint": 0,
+                    "sourceYPoint": 0,
+                    "sourceHeight": 528,
+                    "sourceWidth": 980,
+                    "destinationTileHeight": 528,
+                    "destinationTileWidth": 980
+                }
+            ]
+        }
+    ]
+}
