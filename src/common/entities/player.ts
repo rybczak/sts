@@ -1,7 +1,8 @@
 "use strict";
 
 import { Direction } from "./enums";
-//import { EventEmitter } from "events";
+import { PlayerData } from "./playerData";
+import { IPlayerDataJson }from "../interfaces/_interfaces";
 
 export class Player {
     private _movementSize: number;
@@ -10,9 +11,11 @@ export class Player {
 
     private _worldWidth: number;
 
-    positionX: number = 0;
+    private _data: PlayerData;
 
-    positionY: number = 0;
+    //positionX: number = 0;
+
+    //positionY: number = 0;
 
     currentImage: string;
 
@@ -24,15 +27,30 @@ export class Player {
 
     //playerEmitter: EventEmitter;
 
-    constructor(movemenetSize: number, worldHeight: number, worldWidth: number) {
+    constructor(id: any, movemenetSize: number, worldHeight: number, worldWidth: number) {
         this._movementSize = movemenetSize;
         this._worldHeight = worldHeight;
         this._worldWidth = worldWidth;
+        this._data = new PlayerData(id);
+
         this.currentImage = "BasicPlayer8";
         this.frameCounter = 2;
+       // this.playerEmitter = new EventEmitter();
+    }
+
+    getPlayerData() : IPlayerDataJson {
+        var self = this;
+        return this._data;
+    }
+
+    updatePlayerData(data: IPlayerDataJson) {
+        this._data.id = data.id;
+        this._data.positionX = data.positionX;
+        this._data.positionY = data.positionY;
     }
 
     //todo get config
+    //get this functions to new place
     updatePosition(direction: Direction) {
         var self = this;
         //self.previousPositionX = self.positionX;
@@ -40,29 +58,29 @@ export class Player {
 
         switch (direction) {
             case Direction.Up:
-                if (self.positionY - self._movementSize >= 0) {
-                    self.positionY -= self._movementSize;
+                if (self._data.positionY - self._movementSize >= 0) {
+                    self._data.positionY -= self._movementSize;
                 }
                 self.currentImage = "BasicPlayer4";
                 self.frameCounter = 4;
                 break;
             case Direction.Down:
-                if (self.positionY + self._movementSize < self._worldHeight) {
-                    self.positionY += self._movementSize;
+                if (self._data.positionY + self._movementSize < self._worldHeight) {
+                    self._data.positionY += self._movementSize;
                 }
                 self.currentImage = "BasicPlayer7";
                 self.frameCounter = 4;
                 break;
             case Direction.Left:
-                if (self.positionX - self._movementSize >= 0) {
-                    self.positionX -= self._movementSize;
+                if (self._data.positionX - self._movementSize >= 0) {
+                    self._data.positionX -= self._movementSize;
                 }
                 self.currentImage = "BasicPlayer9";
                 self.frameCounter = 4;
                 break;
             case Direction.Right:
-                if (self.positionX + self._movementSize < self._worldWidth) {
-                    self.positionX += self._movementSize;
+                if (self._data.positionX + self._movementSize < self._worldWidth) {
+                    self._data.positionX += self._movementSize;
                 }
                 self.currentImage = "BasicPlayer1";
                 self.frameCounter = 4;

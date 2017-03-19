@@ -2,7 +2,7 @@
 "use strict";
 
 var ApplicationServer = require('./bin/server/appServer');
-//var GameServer = require('../game');
+var GameServer = require('./bin/server/gameServer');
 var io = require('socket.io');
 var express = require('express');
 var uuid = require('uuid');
@@ -11,6 +11,7 @@ var http = require('http');
 var port = process.env.PORT || 3000;
 var applicationServer = ApplicationServer.Server.bootstrap();
 
+var gameServer = new GameServer.GameServer();
 var server = http.createServer(applicationServer.app);
 server.listen(port);
 console.log('\t :: Express :: Listening on port ' + port);
@@ -18,17 +19,25 @@ console.log('\t :: Express :: Listening on port ' + port);
 var sio = io.listen(server);
 sio.sockets.on('connection', function (client) {
     client.userid = uuid();
-    client.emit('onconnected', { id: client.userid });
+    var newPlayer = gameServer.addNewPlayer(client.userid);
+    client.emit('onconnected', { player: newPlayer });
     //game on client connect behaviour
     console.log('\t :: socket.io :: player ' + client.userid + ' connected');
     
     client.on('message', function (msg) {
-        //game on message behaviour
-        console.log('\t :: socket.io :: message received: ' + msg);
+        //add data to processing queue
+        console.log('\t :: socket.io :: message received: { ' + msg.id + ', ' + msg.move + ' }');
+        gameServer.movePlayer(msg.id, msg.move);
     });
 
     client.on('disconnect', function () {
+        gameServer.removePlayer(client.userid);
         console.log('\t :: socket.io :: player ' + client.userid + ' disconnected');
-        //game on end behaviour
     });
+
+    setInterval(function() {
+        var player = gameServer.getPlayer(client.userid);
+        client.emit('update', { player: player });
+        console.log('\t :: socket.io :: update');
+    }, 1000);
 });

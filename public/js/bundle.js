@@ -26,24 +26,39 @@ exports.__esModule = true;
 var $ = __webpack_require__(1);
 var io = __webpack_require__(12);
 var r = __webpack_require__(34);
+var _entities_1 = __webpack_require__(3);
+var userController_1 = __webpack_require__(35);
+var events_1 = __webpack_require__(70);
 var Client = (function () {
     function Client() {
+        this._messageSequence = 0;
         var self = this;
+        self.player = new _entities_1.Player(0, 48, 3360, 3360);
+        self.emitter = new events_1.EventEmitter();
+        self.emitter.on("playerMove", function (move) {
+            self.socket.emit("message", { id: self.player.getPlayerData().id, move: move });
+            console.log(move);
+        });
+        self.controller = new userController_1.MapController.UserController(self.player, self.emitter);
+        self.controller.registerArrowKeys();
         self.socket = io.connect();
         self.socket.on("connect", function () {
             console.log("connecting");
         }.bind(this));
-        self.socket.on("onconnected", function () {
-            self.connected = true;
-            console.log("connected");
+        self.socket.on("onconnected", function (result) {
+            self.player.updatePlayerData(result.player);
+            console.log("connected, ID: " + self.player.getPlayerData().id);
         });
+        self.socket.on("update", function (result) {
+            self.player.updatePlayerData(result.player);
+        });
+        self.renderer = new r.MapRenderer.Renderer(self.player);
+        self.renderer.init(document.getElementById("canvas"));
     }
     return Client;
 }());
 exports.Client = Client;
 var client = new Client();
-var renderer = new r.MapRenderer.Renderer();
-renderer.init(document.getElementById("canvas"));
 $(".panel-actions-hide").on("click", function () {
     var el = $(".panel-actions-hide");
     if (el.hasClass("fa-minus")) {
@@ -71,20 +86,39 @@ $(".panel-actions-hide").on("click", function () {
 
 /***/ }),
 
+/***/ 3:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+exports.__esModule = true;
+__export(__webpack_require__(37));
+__export(__webpack_require__(40));
+__export(__webpack_require__(39));
+__export(__webpack_require__(13));
+__export(__webpack_require__(36));
+__export(__webpack_require__(38));
+
+
+/***/ }),
+
 /***/ 33:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 exports.__esModule = true;
-var _entities_1 = __webpack_require__(6);
-var _helpers_1 = __webpack_require__(41);
+var _entities_1 = __webpack_require__(3);
+var _helpers_1 = __webpack_require__(42);
 var MapAssets;
 (function (MapAssets) {
     var MapElements = (function () {
         function MapElements() {
             this.elements = new _helpers_1.Dictionary();
-            this._config = new _entities_1.AssetConfig(__webpack_require__(84));
+            this._config = new _entities_1.AssetConfig(__webpack_require__(86));
         }
         MapElements.prototype.load = function () {
             var self = this;
@@ -125,17 +159,17 @@ var MapAssets;
 
 exports.__esModule = true;
 var assets_1 = __webpack_require__(33);
-var userController_1 = __webpack_require__(35);
-var _entities_1 = __webpack_require__(6);
+var _entities_1 = __webpack_require__(3);
 var MapRenderer;
 (function (MapRenderer) {
     var Renderer = (function () {
-        function Renderer() {
+        function Renderer(player) {
             this.counter = 0;
             this.currentFrame = 0;
-            this._config = new _entities_1.MapDrawingConfig(__webpack_require__(83));
-            this.player = new _entities_1.Player(this._config.movementSize, this._config.mapHeight, this._config.mapWidth);
-            this.playerOnMap = new _entities_1.MapPlayer(this.player.positionX, this.player.positionY);
+            this._config = new _entities_1.MapDrawingConfig(__webpack_require__(85));
+            this.player = player;
+            var playerData = this.player.getPlayerData();
+            this.playerOnMap = new _entities_1.MapPlayer(playerData.positionX, playerData.positionY);
             this.wholeMapCanvas = this.createCanvas(this._config.mapWidth, this._config.mapHeight);
             this.wholeMapContext = this.wholeMapCanvas.getContext("2d");
             this.viewPortCanvas = this.createCanvas(this._config.viewPortWidth, this._config.viewPortHeight);
@@ -144,8 +178,11 @@ var MapRenderer;
             this.guiContext = this.guiCanvas.getContext("2d");
             this.playerCanvas = this.createCanvas(this._config.viewPortWidth, this._config.viewPortHeight);
             this.playerContext = this.playerCanvas.getContext("2d");
-            new userController_1.MapController.UserController(this.player).registerArrowKeys();
         }
+        Renderer.prototype.updatePlayerData = function (player) {
+            var self = this;
+            self.player = player;
+        };
         Renderer.prototype.createCanvas = function (width, height) {
             var canvas = document.createElement("canvas");
             canvas.width = width;
@@ -200,25 +237,26 @@ var MapRenderer;
         ;
         Renderer.prototype.drawUserMap = function () {
             var self = this;
+            var playerData = this.player.getPlayerData();
             var srcXPoint = 0;
-            if (self.player.positionX < self.viewPortCanvas.width / 2) {
+            if (playerData.positionX < self.viewPortCanvas.width / 2) {
                 srcXPoint = 0;
             }
-            else if (self.player.positionX > self.wholeMapCanvas.width - (self.viewPortCanvas.width / 2)) {
+            else if (playerData.positionX > self.wholeMapCanvas.width - (self.viewPortCanvas.width / 2)) {
                 srcXPoint = self.wholeMapCanvas.width - self.viewPortCanvas.width;
             }
             else {
-                srcXPoint = self.player.positionX + (self._config.movementSize / 2) - (self.viewPortCanvas.width / 2);
+                srcXPoint = playerData.positionX + (self._config.movementSize / 2) - (self.viewPortCanvas.width / 2);
             }
             var srcYPoint = 0;
-            if (self.player.positionY < self.viewPortCanvas.height / 2) {
+            if (playerData.positionY < self.viewPortCanvas.height / 2) {
                 srcYPoint = 0;
             }
-            else if (self.player.positionY > self.wholeMapCanvas.width - (self.viewPortCanvas.height / 2)) {
+            else if (playerData.positionY > self.wholeMapCanvas.width - (self.viewPortCanvas.height / 2)) {
                 srcYPoint = self.wholeMapCanvas.width - self.viewPortCanvas.height;
             }
             else {
-                srcYPoint = self.player.positionY + (self._config.movementSize / 2) - (self.viewPortCanvas.height / 2);
+                srcYPoint = playerData.positionY + (self._config.movementSize / 2) - (self.viewPortCanvas.height / 2);
             }
             self.viewPortContext.clearRect(0, 0, self.viewPortCanvas.width, self.viewPortCanvas.height);
             self.viewPortContext.drawImage(self.wholeMapCanvas, srcXPoint, srcYPoint, self.viewPortCanvas.width, self.viewPortCanvas.height, 0, 0, self.viewPortCanvas.width, self.viewPortCanvas.height);
@@ -237,6 +275,7 @@ var MapRenderer;
         };
         Renderer.prototype.drawCharacter = function () {
             var self = this;
+            var playerData = this.player.getPlayerData();
             var frameSpeed = 10;
             var frameEnd = self.player.frameCounter;
             if (self.counter === (frameSpeed - 1)) {
@@ -245,20 +284,20 @@ var MapRenderer;
             self.counter = (self.counter + 1) % frameSpeed;
             var row = Math.floor(self.currentFrame / 4);
             var col = Math.floor(self.currentFrame % 4);
-            if (this.player.positionX < self.playerCanvas.width / 2) {
-                this.playerOnMap.positionXOnMap = this.player.positionX;
+            if (playerData.positionX < self.playerCanvas.width / 2) {
+                this.playerOnMap.positionXOnMap = playerData.positionX;
             }
-            else if (this.player.positionX > this.wholeMapCanvas.width - (self.playerCanvas.width / 2)) {
-                this.playerOnMap.positionXOnMap = self.playerCanvas.width - (this.wholeMapCanvas.width - this.player.positionX);
+            else if (playerData.positionX > this.wholeMapCanvas.width - (self.playerCanvas.width / 2)) {
+                this.playerOnMap.positionXOnMap = self.playerCanvas.width - (this.wholeMapCanvas.width - playerData.positionX);
             }
             else {
                 this.playerOnMap.positionXOnMap = (this.playerCanvas.width / 2) - (self._config.movementSize / 2);
             }
-            if (this.player.positionY < self.playerCanvas.height / 2) {
-                this.playerOnMap.positionYOnMap = this.player.positionY;
+            if (playerData.positionY < self.playerCanvas.height / 2) {
+                this.playerOnMap.positionYOnMap = playerData.positionY;
             }
-            else if (this.player.positionY > this.wholeMapCanvas.height - (self.playerCanvas.height / 2)) {
-                this.playerOnMap.positionYOnMap = this.playerCanvas.height - (this.wholeMapCanvas.height - this.player.positionY);
+            else if (playerData.positionY > this.wholeMapCanvas.height - (self.playerCanvas.height / 2)) {
+                this.playerOnMap.positionYOnMap = this.playerCanvas.height - (this.wholeMapCanvas.height - playerData.positionY);
             }
             else {
                 this.playerOnMap.positionYOnMap = (this.playerCanvas.height / 2) - (self._config.movementSize / 2);
@@ -280,34 +319,45 @@ var MapRenderer;
 "use strict";
 
 exports.__esModule = true;
-var _entities_1 = __webpack_require__(6);
+var _entities_1 = __webpack_require__(3);
 var MapController;
 (function (MapController) {
     var UserController = (function () {
-        function UserController(player) {
+        function UserController(player, emitter) {
             this._player = player;
+            this._emitter = emitter;
         }
+        UserController.prototype.updatePlayerData = function (player) {
+            var self = this;
+            self._player = player;
+        };
         UserController.prototype.registerArrowKeys = function () {
             var self = this;
             document.onkeydown = function (event) {
+                var direction;
                 switch (event.keyCode) {
                     case 38:
-                        self._player.updatePosition(_entities_1.Direction.Up);
+                        direction = _entities_1.Direction.Up;
+                        self._player.updatePosition(direction);
                         event.preventDefault();
                         break;
                     case 40:
-                        self._player.updatePosition(_entities_1.Direction.Down);
+                        direction = _entities_1.Direction.Down;
+                        self._player.updatePosition(direction);
                         event.preventDefault();
                         break;
                     case 37:
-                        self._player.updatePosition(_entities_1.Direction.Left);
+                        direction = _entities_1.Direction.Left;
+                        self._player.updatePosition(direction);
                         event.preventDefault();
                         break;
                     case 39:
-                        self._player.updatePosition(_entities_1.Direction.Right);
+                        direction = _entities_1.Direction.Right;
+                        self._player.updatePosition(direction);
                         event.preventDefault();
                         break;
                 }
+                self._emitter.emit("playerMove", direction);
             };
             document.onkeyup = function (event) {
                 switch (event.keyCode) {
@@ -432,43 +482,52 @@ exports.MapPlayer = MapPlayer;
 
 exports.__esModule = true;
 var enums_1 = __webpack_require__(13);
+var playerData_1 = __webpack_require__(41);
 var Player = (function () {
-    function Player(movemenetSize, worldHeight, worldWidth) {
-        this.positionX = 0;
-        this.positionY = 0;
+    function Player(id, movemenetSize, worldHeight, worldWidth) {
         this._movementSize = movemenetSize;
         this._worldHeight = worldHeight;
         this._worldWidth = worldWidth;
+        this._data = new playerData_1.PlayerData(id);
         this.currentImage = "BasicPlayer8";
         this.frameCounter = 2;
     }
+    Player.prototype.getPlayerData = function () {
+        var self = this;
+        return this._data;
+    };
+    Player.prototype.updatePlayerData = function (data) {
+        this._data.id = data.id;
+        this._data.positionX = data.positionX;
+        this._data.positionY = data.positionY;
+    };
     Player.prototype.updatePosition = function (direction) {
         var self = this;
         switch (direction) {
             case enums_1.Direction.Up:
-                if (self.positionY - self._movementSize >= 0) {
-                    self.positionY -= self._movementSize;
+                if (self._data.positionY - self._movementSize >= 0) {
+                    self._data.positionY -= self._movementSize;
                 }
                 self.currentImage = "BasicPlayer4";
                 self.frameCounter = 4;
                 break;
             case enums_1.Direction.Down:
-                if (self.positionY + self._movementSize < self._worldHeight) {
-                    self.positionY += self._movementSize;
+                if (self._data.positionY + self._movementSize < self._worldHeight) {
+                    self._data.positionY += self._movementSize;
                 }
                 self.currentImage = "BasicPlayer7";
                 self.frameCounter = 4;
                 break;
             case enums_1.Direction.Left:
-                if (self.positionX - self._movementSize >= 0) {
-                    self.positionX -= self._movementSize;
+                if (self._data.positionX - self._movementSize >= 0) {
+                    self._data.positionX -= self._movementSize;
                 }
                 self.currentImage = "BasicPlayer9";
                 self.frameCounter = 4;
                 break;
             case enums_1.Direction.Right:
-                if (self.positionX + self._movementSize < self._worldWidth) {
-                    self.positionX += self._movementSize;
+                if (self._data.positionX + self._movementSize < self._worldWidth) {
+                    self._data.positionX += self._movementSize;
                 }
                 self.currentImage = "BasicPlayer1";
                 self.frameCounter = 4;
@@ -514,18 +573,37 @@ exports.Player = Player;
 
 "use strict";
 
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
 exports.__esModule = true;
-__export(__webpack_require__(42));
-__export(__webpack_require__(44));
-__export(__webpack_require__(43));
+var PlayerData = (function () {
+    function PlayerData(id) {
+        this.id = id;
+        this.positionX = 0;
+        this.positionY = 0;
+    }
+    return PlayerData;
+}());
+exports.PlayerData = PlayerData;
 
 
 /***/ }),
 
 /***/ 42:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+exports.__esModule = true;
+__export(__webpack_require__(43));
+__export(__webpack_require__(45));
+__export(__webpack_require__(44));
+
+
+/***/ }),
+
+/***/ 43:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -580,7 +658,7 @@ exports.Dictionary = Dictionary;
 
 /***/ }),
 
-/***/ 43:
+/***/ 44:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -603,7 +681,7 @@ exports.SplitSpriteRequest = SplitSpriteRequest;
 
 /***/ }),
 
-/***/ 44:
+/***/ 45:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -647,26 +725,316 @@ exports.SpriteManager = SpriteManager;
 
 /***/ }),
 
-/***/ 6:
-/***/ (function(module, exports, __webpack_require__) {
+/***/ 70:
+/***/ (function(module, exports) {
 
-"use strict";
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+function EventEmitter() {
+  this._events = this._events || {};
+  this._maxListeners = this._maxListeners || undefined;
 }
-exports.__esModule = true;
-__export(__webpack_require__(37));
-__export(__webpack_require__(40));
-__export(__webpack_require__(39));
-__export(__webpack_require__(13));
-__export(__webpack_require__(36));
-__export(__webpack_require__(38));
+module.exports = EventEmitter;
+
+// Backwards-compat with node 0.10.x
+EventEmitter.EventEmitter = EventEmitter;
+
+EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._maxListeners = undefined;
+
+// By default EventEmitters will print a warning if more than 10 listeners are
+// added to it. This is a useful default which helps finding memory leaks.
+EventEmitter.defaultMaxListeners = 10;
+
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!isNumber(n) || n < 0 || isNaN(n))
+    throw TypeError('n must be a positive number');
+  this._maxListeners = n;
+  return this;
+};
+
+EventEmitter.prototype.emit = function(type) {
+  var er, handler, len, args, i, listeners;
+
+  if (!this._events)
+    this._events = {};
+
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events.error ||
+        (isObject(this._events.error) && !this._events.error.length)) {
+      er = arguments[1];
+      if (er instanceof Error) {
+        throw er; // Unhandled 'error' event
+      } else {
+        // At least give some kind of context to the user
+        var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
+        err.context = er;
+        throw err;
+      }
+    }
+  }
+
+  handler = this._events[type];
+
+  if (isUndefined(handler))
+    return false;
+
+  if (isFunction(handler)) {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        args = Array.prototype.slice.call(arguments, 1);
+        handler.apply(this, args);
+    }
+  } else if (isObject(handler)) {
+    args = Array.prototype.slice.call(arguments, 1);
+    listeners = handler.slice();
+    len = listeners.length;
+    for (i = 0; i < len; i++)
+      listeners[i].apply(this, args);
+  }
+
+  return true;
+};
+
+EventEmitter.prototype.addListener = function(type, listener) {
+  var m;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events)
+    this._events = {};
+
+  // To avoid recursion in the case that type === "newListener"! Before
+  // adding it to the listeners, first emit "newListener".
+  if (this._events.newListener)
+    this.emit('newListener', type,
+              isFunction(listener.listener) ?
+              listener.listener : listener);
+
+  if (!this._events[type])
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  else if (isObject(this._events[type]))
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  else
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+
+  // Check for listener leak
+  if (isObject(this._events[type]) && !this._events[type].warned) {
+    if (!isUndefined(this._maxListeners)) {
+      m = this._maxListeners;
+    } else {
+      m = EventEmitter.defaultMaxListeners;
+    }
+
+    if (m && m > 0 && this._events[type].length > m) {
+      this._events[type].warned = true;
+      console.error('(node) warning: possible EventEmitter memory ' +
+                    'leak detected. %d listeners added. ' +
+                    'Use emitter.setMaxListeners() to increase limit.',
+                    this._events[type].length);
+      if (typeof console.trace === 'function') {
+        // not supported in IE 10
+        console.trace();
+      }
+    }
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  var fired = false;
+
+  function g() {
+    this.removeListener(type, g);
+
+    if (!fired) {
+      fired = true;
+      listener.apply(this, arguments);
+    }
+  }
+
+  g.listener = listener;
+  this.on(type, g);
+
+  return this;
+};
+
+// emits a 'removeListener' event iff the listener was removed
+EventEmitter.prototype.removeListener = function(type, listener) {
+  var list, position, length, i;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events || !this._events[type])
+    return this;
+
+  list = this._events[type];
+  length = list.length;
+  position = -1;
+
+  if (list === listener ||
+      (isFunction(list.listener) && list.listener === listener)) {
+    delete this._events[type];
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+
+  } else if (isObject(list)) {
+    for (i = length; i-- > 0;) {
+      if (list[i] === listener ||
+          (list[i].listener && list[i].listener === listener)) {
+        position = i;
+        break;
+      }
+    }
+
+    if (position < 0)
+      return this;
+
+    if (list.length === 1) {
+      list.length = 0;
+      delete this._events[type];
+    } else {
+      list.splice(position, 1);
+    }
+
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  var key, listeners;
+
+  if (!this._events)
+    return this;
+
+  // not listening for removeListener, no need to emit
+  if (!this._events.removeListener) {
+    if (arguments.length === 0)
+      this._events = {};
+    else if (this._events[type])
+      delete this._events[type];
+    return this;
+  }
+
+  // emit removeListener for all listeners on all events
+  if (arguments.length === 0) {
+    for (key in this._events) {
+      if (key === 'removeListener') continue;
+      this.removeAllListeners(key);
+    }
+    this.removeAllListeners('removeListener');
+    this._events = {};
+    return this;
+  }
+
+  listeners = this._events[type];
+
+  if (isFunction(listeners)) {
+    this.removeListener(type, listeners);
+  } else if (listeners) {
+    // LIFO order
+    while (listeners.length)
+      this.removeListener(type, listeners[listeners.length - 1]);
+  }
+  delete this._events[type];
+
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  var ret;
+  if (!this._events || !this._events[type])
+    ret = [];
+  else if (isFunction(this._events[type]))
+    ret = [this._events[type]];
+  else
+    ret = this._events[type].slice();
+  return ret;
+};
+
+EventEmitter.prototype.listenerCount = function(type) {
+  if (this._events) {
+    var evlistener = this._events[type];
+
+    if (isFunction(evlistener))
+      return 1;
+    else if (evlistener)
+      return evlistener.length;
+  }
+  return 0;
+};
+
+EventEmitter.listenerCount = function(emitter, type) {
+  return emitter.listenerCount(type);
+};
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
 
 
 /***/ }),
 
-/***/ 83:
+/***/ 85:
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -683,7 +1051,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 84:
+/***/ 86:
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -781,7 +1149,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 86:
+/***/ 88:
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(29);
@@ -789,5 +1157,5 @@ module.exports = __webpack_require__(29);
 
 /***/ })
 
-},[86]);
+},[88]);
 //# sourceMappingURL=bundle.js.map

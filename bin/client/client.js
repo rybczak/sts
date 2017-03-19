@@ -3,23 +3,38 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const $ = require("jquery");
 const io = require("socket.io-client");
 const r = require("./map/renderer");
+const _entities_1 = require("../common/entities/_entities");
+const userController_1 = require("./map/userController");
+const events_1 = require("events");
 class Client {
     constructor() {
+        this._messageSequence = 0;
         var self = this;
+        self.player = new _entities_1.Player(0, 48, 3360, 3360);
+        self.emitter = new events_1.EventEmitter();
+        self.emitter.on("playerMove", function (move) {
+            self.socket.emit("message", { id: self.player.getPlayerData().id, move: move });
+            console.log(move);
+        });
+        self.controller = new userController_1.MapController.UserController(self.player, self.emitter);
+        self.controller.registerArrowKeys();
         self.socket = io.connect();
         self.socket.on("connect", function () {
             console.log("connecting");
         }.bind(this));
-        self.socket.on("onconnected", function () {
-            self.connected = true;
-            console.log("connected");
+        self.socket.on("onconnected", function (result) {
+            self.player.updatePlayerData(result.player);
+            console.log("connected, ID: " + self.player.getPlayerData().id);
         });
+        self.socket.on("update", function (result) {
+            self.player.updatePlayerData(result.player);
+        });
+        self.renderer = new r.MapRenderer.Renderer(self.player);
+        self.renderer.init(document.getElementById("canvas"));
     }
 }
 exports.Client = Client;
 var client = new Client();
-var renderer = new r.MapRenderer.Renderer();
-renderer.init(document.getElementById("canvas"));
 $(".panel-actions-hide").on("click", function () {
     var el = $(".panel-actions-hide");
     if (el.hasClass("fa-minus")) {

@@ -6,29 +6,55 @@ import * as ma from "./map/assets";
 import mapAssets = ma.MapAssets;
 import * as entities from "../common/entities/_entities";
 import * as r from "./map/renderer";
+import { Player } from "../common/entities/_entities";
+import { MapController } from "./map/userController";
+import { EventEmitter } from "events";
 
 export class Client {
+    private _messageSequence: number = 0;
+
     public socket: any;
     public connected: boolean;
+    public player: Player;
+    public renderer: r.MapRenderer.Renderer;
+    public controller: MapController.UserController;
+    public emitter: EventEmitter;
 
     constructor() {
         var self = this;
+
+        self.player = new Player(0, 48, 3360, 3360);
+        self.emitter = new EventEmitter();
+        self.emitter.on("playerMove", function (move: any) {
+            self.socket.emit("message", { id: self.player.getPlayerData().id, move: move });
+            console.log(move);
+        });
+        self.controller = new MapController.UserController(self.player, self.emitter);
+        self.controller.registerArrowKeys();
 
         self.socket = io.connect();
         self.socket.on("connect", function () {
             console.log("connecting");
         }.bind(this));
 
-        self.socket.on("onconnected", function () {
-            self.connected = true;
-            console.log("connected");
+        self.socket.on("onconnected", function (result: any) {
+            self.player.updatePlayerData(result.player);
+            console.log("connected, ID: " + self.player.getPlayerData().id);
         });
+
+        self.socket.on("update", function (result: any) {
+            //add reconciliation, this is simple solution for start purposes
+            self.player.updatePlayerData(result.player);
+            //self.renderer.updatePlayerData(self.player);
+        });
+
+        self.renderer = new r.MapRenderer.Renderer(self.player);
+        self.renderer.init(<HTMLCanvasElement>document.getElementById("canvas"));
     }
 }
 
 var client = new Client();
-var renderer = new r.MapRenderer.Renderer();
-renderer.init(<HTMLCanvasElement>document.getElementById("canvas"));
+
 
 //to refactor
 $(".panel-actions-hide").on("click", function () {

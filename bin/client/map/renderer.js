@@ -1,17 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const assets_1 = require("./assets");
-const userController_1 = require("./userController");
 const _entities_1 = require("../../common/entities/_entities");
 var MapRenderer;
 (function (MapRenderer) {
     class Renderer {
-        constructor() {
+        constructor(player) {
             this.counter = 0;
             this.currentFrame = 0;
             this._config = new _entities_1.MapDrawingConfig(require("../config/mapDrawingConfig.json"));
-            this.player = new _entities_1.Player(this._config.movementSize, this._config.mapHeight, this._config.mapWidth);
-            this.playerOnMap = new _entities_1.MapPlayer(this.player.positionX, this.player.positionY);
+            this.player = player;
+            var playerData = this.player.getPlayerData();
+            this.playerOnMap = new _entities_1.MapPlayer(playerData.positionX, playerData.positionY);
             this.wholeMapCanvas = this.createCanvas(this._config.mapWidth, this._config.mapHeight);
             this.wholeMapContext = this.wholeMapCanvas.getContext("2d");
             this.viewPortCanvas = this.createCanvas(this._config.viewPortWidth, this._config.viewPortHeight);
@@ -20,7 +20,10 @@ var MapRenderer;
             this.guiContext = this.guiCanvas.getContext("2d");
             this.playerCanvas = this.createCanvas(this._config.viewPortWidth, this._config.viewPortHeight);
             this.playerContext = this.playerCanvas.getContext("2d");
-            new userController_1.MapController.UserController(this.player).registerArrowKeys();
+        }
+        updatePlayerData(player) {
+            var self = this;
+            self.player = player;
         }
         createCanvas(width, height) {
             var canvas = document.createElement("canvas");
@@ -76,25 +79,26 @@ var MapRenderer;
         ;
         drawUserMap() {
             var self = this;
+            var playerData = this.player.getPlayerData();
             var srcXPoint = 0;
-            if (self.player.positionX < self.viewPortCanvas.width / 2) {
+            if (playerData.positionX < self.viewPortCanvas.width / 2) {
                 srcXPoint = 0;
             }
-            else if (self.player.positionX > self.wholeMapCanvas.width - (self.viewPortCanvas.width / 2)) {
+            else if (playerData.positionX > self.wholeMapCanvas.width - (self.viewPortCanvas.width / 2)) {
                 srcXPoint = self.wholeMapCanvas.width - self.viewPortCanvas.width;
             }
             else {
-                srcXPoint = self.player.positionX + (self._config.movementSize / 2) - (self.viewPortCanvas.width / 2);
+                srcXPoint = playerData.positionX + (self._config.movementSize / 2) - (self.viewPortCanvas.width / 2);
             }
             var srcYPoint = 0;
-            if (self.player.positionY < self.viewPortCanvas.height / 2) {
+            if (playerData.positionY < self.viewPortCanvas.height / 2) {
                 srcYPoint = 0;
             }
-            else if (self.player.positionY > self.wholeMapCanvas.width - (self.viewPortCanvas.height / 2)) {
+            else if (playerData.positionY > self.wholeMapCanvas.width - (self.viewPortCanvas.height / 2)) {
                 srcYPoint = self.wholeMapCanvas.width - self.viewPortCanvas.height;
             }
             else {
-                srcYPoint = self.player.positionY + (self._config.movementSize / 2) - (self.viewPortCanvas.height / 2);
+                srcYPoint = playerData.positionY + (self._config.movementSize / 2) - (self.viewPortCanvas.height / 2);
             }
             self.viewPortContext.clearRect(0, 0, self.viewPortCanvas.width, self.viewPortCanvas.height);
             self.viewPortContext.drawImage(self.wholeMapCanvas, srcXPoint, srcYPoint, self.viewPortCanvas.width, self.viewPortCanvas.height, 0, 0, self.viewPortCanvas.width, self.viewPortCanvas.height);
@@ -113,6 +117,7 @@ var MapRenderer;
         }
         drawCharacter() {
             var self = this;
+            var playerData = this.player.getPlayerData();
             var frameSpeed = 10;
             var frameEnd = self.player.frameCounter;
             if (self.counter === (frameSpeed - 1)) {
@@ -121,20 +126,20 @@ var MapRenderer;
             self.counter = (self.counter + 1) % frameSpeed;
             var row = Math.floor(self.currentFrame / 4);
             var col = Math.floor(self.currentFrame % 4);
-            if (this.player.positionX < self.playerCanvas.width / 2) {
-                this.playerOnMap.positionXOnMap = this.player.positionX;
+            if (playerData.positionX < self.playerCanvas.width / 2) {
+                this.playerOnMap.positionXOnMap = playerData.positionX;
             }
-            else if (this.player.positionX > this.wholeMapCanvas.width - (self.playerCanvas.width / 2)) {
-                this.playerOnMap.positionXOnMap = self.playerCanvas.width - (this.wholeMapCanvas.width - this.player.positionX);
+            else if (playerData.positionX > this.wholeMapCanvas.width - (self.playerCanvas.width / 2)) {
+                this.playerOnMap.positionXOnMap = self.playerCanvas.width - (this.wholeMapCanvas.width - playerData.positionX);
             }
             else {
                 this.playerOnMap.positionXOnMap = (this.playerCanvas.width / 2) - (self._config.movementSize / 2);
             }
-            if (this.player.positionY < self.playerCanvas.height / 2) {
-                this.playerOnMap.positionYOnMap = this.player.positionY;
+            if (playerData.positionY < self.playerCanvas.height / 2) {
+                this.playerOnMap.positionYOnMap = playerData.positionY;
             }
-            else if (this.player.positionY > this.wholeMapCanvas.height - (self.playerCanvas.height / 2)) {
-                this.playerOnMap.positionYOnMap = this.playerCanvas.height - (this.wholeMapCanvas.height - this.player.positionY);
+            else if (playerData.positionY > this.wholeMapCanvas.height - (self.playerCanvas.height / 2)) {
+                this.playerOnMap.positionYOnMap = this.playerCanvas.height - (this.wholeMapCanvas.height - playerData.positionY);
             }
             else {
                 this.playerOnMap.positionYOnMap = (this.playerCanvas.height / 2) - (self._config.movementSize / 2);
