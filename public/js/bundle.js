@@ -17,7 +17,46 @@ var Direction;
 
 /***/ }),
 
-/***/ 29:
+/***/ 14:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+exports.__esModule = true;
+var PlayerData = (function () {
+    function PlayerData(id) {
+        this.id = id;
+        this.positionX = 0;
+        this.positionY = 0;
+    }
+    return PlayerData;
+}());
+exports.PlayerData = PlayerData;
+
+
+/***/ }),
+
+/***/ 3:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+exports.__esModule = true;
+__export(__webpack_require__(38));
+__export(__webpack_require__(41));
+__export(__webpack_require__(40));
+__export(__webpack_require__(13));
+__export(__webpack_require__(37));
+__export(__webpack_require__(39));
+__export(__webpack_require__(14));
+
+
+/***/ }),
+
+/***/ 30:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25,9 +64,9 @@ var Direction;
 exports.__esModule = true;
 var $ = __webpack_require__(1);
 var io = __webpack_require__(12);
-var r = __webpack_require__(34);
+var r = __webpack_require__(35);
 var _entities_1 = __webpack_require__(3);
-var userController_1 = __webpack_require__(35);
+var userController_1 = __webpack_require__(36);
 var events_1 = __webpack_require__(70);
 var Client = (function () {
     function Client() {
@@ -50,9 +89,19 @@ var Client = (function () {
             console.log("connected, ID: " + self.player.getPlayerData().id);
         });
         self.socket.on("update", function (result) {
-            self.player.updatePlayerData(result.player);
+            var currentPlayerIndex = -1;
+            for (var x = 0; x < result.data.length; x++) {
+                var player = result.data[x];
+                if (player.id === self.player.getPlayerData().id) {
+                    self.player.updatePlayerData(player);
+                    currentPlayerIndex = x;
+                }
+            }
+            result.data.splice(currentPlayerIndex, 1);
+            self.otherPlayers = result.data;
+            self.renderer.updateWorldInformation(self.otherPlayers);
         });
-        self.renderer = new r.MapRenderer.Renderer(self.player);
+        self.renderer = new r.MapRenderer.Renderer(self.player, self.otherPlayers);
         self.renderer.init(document.getElementById("canvas"));
     }
     return Client;
@@ -86,26 +135,7 @@ $(".panel-actions-hide").on("click", function () {
 
 /***/ }),
 
-/***/ 3:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-exports.__esModule = true;
-__export(__webpack_require__(37));
-__export(__webpack_require__(40));
-__export(__webpack_require__(39));
-__export(__webpack_require__(13));
-__export(__webpack_require__(36));
-__export(__webpack_require__(38));
-
-
-/***/ }),
-
-/***/ 33:
+/***/ 34:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -152,26 +182,29 @@ var MapAssets;
 
 /***/ }),
 
-/***/ 34:
+/***/ 35:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 exports.__esModule = true;
-var assets_1 = __webpack_require__(33);
+var assets_1 = __webpack_require__(34);
 var _entities_1 = __webpack_require__(3);
 var MapRenderer;
 (function (MapRenderer) {
     var Renderer = (function () {
-        function Renderer(player) {
+        function Renderer(player, otherPlayers) {
             this.counter = 0;
             this.currentFrame = 0;
             this._config = new _entities_1.MapDrawingConfig(__webpack_require__(85));
             this.player = player;
             var playerData = this.player.getPlayerData();
             this.playerOnMap = new _entities_1.MapPlayer(playerData.positionX, playerData.positionY);
+            this.otherPlayers = otherPlayers;
             this.wholeMapCanvas = this.createCanvas(this._config.mapWidth, this._config.mapHeight);
             this.wholeMapContext = this.wholeMapCanvas.getContext("2d");
+            this.otherPlayersCanvas = this.createCanvas(this._config.mapWidth, this._config.mapHeight);
+            this.otherPlayersContext = this.otherPlayersCanvas.getContext("2d");
             this.viewPortCanvas = this.createCanvas(this._config.viewPortWidth, this._config.viewPortHeight);
             this.viewPortContext = this.viewPortCanvas.getContext("2d");
             this.guiCanvas = this.createCanvas(this._config.screenWidth, this._config.screenHeight);
@@ -179,10 +212,11 @@ var MapRenderer;
             this.playerCanvas = this.createCanvas(this._config.viewPortWidth, this._config.viewPortHeight);
             this.playerContext = this.playerCanvas.getContext("2d");
         }
-        Renderer.prototype.updatePlayerData = function (player) {
+        Renderer.prototype.updateWorldInformation = function (info) {
             var self = this;
-            self.player = player;
+            self.otherPlayers = info;
         };
+        ;
         Renderer.prototype.createCanvas = function (width, height) {
             var canvas = document.createElement("canvas");
             canvas.width = width;
@@ -210,6 +244,7 @@ var MapRenderer;
                 var timeDelta = currentTime - self._previousDrawingTime;
                 self._previousDrawingTime = currentTime;
                 if (timeDelta > self._config.interval) {
+                    self.drawOtherCharacters();
                     self.drawUserMap();
                     self.drawCharacter();
                     self.drawMenu();
@@ -260,6 +295,7 @@ var MapRenderer;
             }
             self.viewPortContext.clearRect(0, 0, self.viewPortCanvas.width, self.viewPortCanvas.height);
             self.viewPortContext.drawImage(self.wholeMapCanvas, srcXPoint, srcYPoint, self.viewPortCanvas.width, self.viewPortCanvas.height, 0, 0, self.viewPortCanvas.width, self.viewPortCanvas.height);
+            self.viewPortContext.drawImage(self.otherPlayersCanvas, srcXPoint, srcYPoint, self.viewPortCanvas.width, self.viewPortCanvas.height, 0, 0, self.viewPortCanvas.width, self.viewPortCanvas.height);
         };
         Renderer.prototype.drawMenu = function () {
             var self = this;
@@ -272,6 +308,16 @@ var MapRenderer;
         Renderer.prototype.drawBorder = function () {
             var self = this;
             self.guiContext.drawImage(self.elements.elements.get("Border0").value, 0, 0);
+        };
+        Renderer.prototype.drawOtherCharacters = function () {
+            var self = this;
+            var playersData = self.otherPlayers;
+            self.otherPlayersContext.clearRect(0, 0, self.otherPlayersCanvas.width, self.otherPlayersCanvas.height);
+            if (playersData) {
+                playersData.forEach(function (player) {
+                    self.otherPlayersContext.drawImage(self.elements.elements.get("BasicPlayer8").value, 0, 0, 96, 96, player.positionX, player.positionY, 96, 96);
+                });
+            }
         };
         Renderer.prototype.drawCharacter = function () {
             var self = this;
@@ -313,7 +359,7 @@ var MapRenderer;
 
 /***/ }),
 
-/***/ 35:
+/***/ 36:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -388,7 +434,7 @@ var MapController;
 
 /***/ }),
 
-/***/ 36:
+/***/ 37:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -415,7 +461,7 @@ var ConfigElement = (function () {
 
 /***/ }),
 
-/***/ 37:
+/***/ 38:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -431,7 +477,7 @@ exports.Element = Element;
 
 /***/ }),
 
-/***/ 38:
+/***/ 39:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -456,7 +502,7 @@ exports.MapDrawingConfig = MapDrawingConfig;
 
 /***/ }),
 
-/***/ 39:
+/***/ 40:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -475,14 +521,14 @@ exports.MapPlayer = MapPlayer;
 
 /***/ }),
 
-/***/ 40:
+/***/ 41:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 exports.__esModule = true;
 var enums_1 = __webpack_require__(13);
-var playerData_1 = __webpack_require__(41);
+var playerData_1 = __webpack_require__(14);
 var Player = (function () {
     function Player(id, movemenetSize, worldHeight, worldWidth) {
         this._movementSize = movemenetSize;
@@ -564,25 +610,6 @@ var Player = (function () {
     return Player;
 }());
 exports.Player = Player;
-
-
-/***/ }),
-
-/***/ 41:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-exports.__esModule = true;
-var PlayerData = (function () {
-    function PlayerData(id) {
-        this.id = id;
-        this.positionX = 0;
-        this.positionY = 0;
-    }
-    return PlayerData;
-}());
-exports.PlayerData = PlayerData;
 
 
 /***/ }),
@@ -1152,7 +1179,7 @@ module.exports = {
 /***/ 88:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(29);
+module.exports = __webpack_require__(30);
 
 
 /***/ })

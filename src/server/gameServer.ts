@@ -35,10 +35,15 @@ export class GameServer {
         data.updatePosition(userMove);
     }
 
-    //get data about whole world, not one player
-    getPlayer(userID: any): IPlayerDataJson {
+    getData(): Array<IPlayerDataJson> {
         var self = this;
-        var data = self.players.get(userID) != null ? self.players.get(userID).getPlayerData() : null;
-        return data;
+        var result = new Array<IPlayerDataJson>();
+        var players = self.players.values();
+
+        for (var x = 0; x < players.length; x++) {
+            result.push(players[x].getPlayerData());
+        }
+
+        return result;
     }
 }

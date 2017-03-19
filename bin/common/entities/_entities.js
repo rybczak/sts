@@ -9,3 +9,4 @@ __export(require("./mapPlayer"));
 __export(require("./enums"));
 __export(require("./assetConfig"));
 __export(require("./mapDrawingConfig"));
+__export(require("./playerData"));

@@ -27,9 +27,19 @@ class Client {
             console.log("connected, ID: " + self.player.getPlayerData().id);
         });
         self.socket.on("update", function (result) {
-            self.player.updatePlayerData(result.player);
+            var currentPlayerIndex = -1;
+            for (var x = 0; x < result.data.length; x++) {
+                var player = result.data[x];
+                if (player.id === self.player.getPlayerData().id) {
+                    self.player.updatePlayerData(player);
+                    currentPlayerIndex = x;
+                }
+            }
+            result.data.splice(currentPlayerIndex, 1);
+            self.otherPlayers = result.data;
+            self.renderer.updateWorldInformation(self.otherPlayers);
         });
-        self.renderer = new r.MapRenderer.Renderer(self.player);
+        self.renderer = new r.MapRenderer.Renderer(self.player, self.otherPlayers);
         self.renderer.init(document.getElementById("canvas"));
     }
 }

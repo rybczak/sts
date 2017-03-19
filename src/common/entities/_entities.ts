@@ -6,3 +6,4 @@ export * from "./mapPlayer";
 export * from "./enums";
 export * from "./assetConfig";
 export * from "./mapDrawingConfig";
+export * from "./playerData";

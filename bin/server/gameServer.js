@@ -21,10 +21,14 @@ class GameServer {
         var data = self.players.get(userID);
         data.updatePosition(userMove);
     }
-    getPlayer(userID) {
+    getData() {
         var self = this;
-        var data = self.players.get(userID) != null ? self.players.get(userID).getPlayerData() : null;
-        return data;
+        var result = new Array();
+        var players = self.players.values();
+        for (var x = 0; x < players.length; x++) {
+            result.push(players[x].getPlayerData());
+        }
+        return result;
     }
 }
 exports.GameServer = GameServer;

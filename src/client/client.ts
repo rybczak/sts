@@ -7,6 +7,7 @@ import mapAssets = ma.MapAssets;
 import * as entities from "../common/entities/_entities";
 import * as r from "./map/renderer";
 import { Player } from "../common/entities/_entities";
+import { IPlayerDataJson } from "../common/interfaces/_interfaces";
 import { MapController } from "./map/userController";
 import { EventEmitter } from "events";
 
@@ -16,6 +17,7 @@ export class Client {
     public socket: any;
     public connected: boolean;
     public player: Player;
+    public otherPlayers: Array<IPlayerDataJson>;
     public renderer: r.MapRenderer.Renderer;
     public controller: MapController.UserController;
     public emitter: EventEmitter;
@@ -44,11 +46,21 @@ export class Client {
 
         self.socket.on("update", function (result: any) {
             //add reconciliation, this is simple solution for start purposes
-            self.player.updatePlayerData(result.player);
-            //self.renderer.updatePlayerData(self.player);
+            var currentPlayerIndex = -1;
+            for (var x = 0; x < result.data.length; x++) {
+                var player = result.data[x];
+                if (player.id === self.player.getPlayerData().id) {
+                    self.player.updatePlayerData(player);
+                    currentPlayerIndex = x;
+                }
+            }
+            result.data.splice(currentPlayerIndex, 1);
+            self.otherPlayers = result.data;
+
+            self.renderer.updateWorldInformation(self.otherPlayers);
         });
 
-        self.renderer = new r.MapRenderer.Renderer(self.player);
+        self.renderer = new r.MapRenderer.Renderer(self.player, self.otherPlayers);
         self.renderer.init(<HTMLCanvasElement>document.getElementById("canvas"));
     }
 }

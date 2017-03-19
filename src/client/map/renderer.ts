@@ -2,7 +2,7 @@
 "use strict";
 
 import { MapAssets } from "./assets";
-import { MapDrawingConfig, MapPlayer, Player } from "../../common/entities/_entities";
+import { MapDrawingConfig, MapPlayer, Player, PlayerData } from "../../common/entities/_entities";
 
 export module MapRenderer {
     export class Renderer {
@@ -20,6 +20,8 @@ export module MapRenderer {
         public guiContext: CanvasRenderingContext2D;
         public playerCanvas: HTMLCanvasElement;
         public playerContext: CanvasRenderingContext2D;
+        public otherPlayersCanvas: HTMLCanvasElement;
+        public otherPlayersContext: CanvasRenderingContext2D;
         public wholeMapCanvas: HTMLCanvasElement;
         public wholeMapContext: CanvasRenderingContext2D;
 
@@ -27,16 +29,21 @@ export module MapRenderer {
 
         //todo change to whole game data (abut map, player, other players)
         public player: Player;
+        public otherPlayers: Array<PlayerData>;
         public playerOnMap: MapPlayer;
 
-        constructor(player: Player) {
+        constructor(player: Player, otherPlayers: Array<PlayerData>) {
             this._config = new MapDrawingConfig(require("../config/mapDrawingConfig.json"));
             this.player = player;
             var playerData = this.player.getPlayerData();
             this.playerOnMap = new MapPlayer(playerData.positionX, playerData.positionY);
+            this.otherPlayers = otherPlayers;
 
             this.wholeMapCanvas = this.createCanvas(this._config.mapWidth, this._config.mapHeight);
             this.wholeMapContext = this.wholeMapCanvas.getContext("2d");
+
+            this.otherPlayersCanvas = this.createCanvas(this._config.mapWidth, this._config.mapHeight);
+            this.otherPlayersContext = this.otherPlayersCanvas.getContext("2d");
 
             this.viewPortCanvas = this.createCanvas(this._config.viewPortWidth, this._config.viewPortHeight);
             this.viewPortContext = this.viewPortCanvas.getContext("2d");
@@ -48,12 +55,10 @@ export module MapRenderer {
             this.playerContext = this.playerCanvas.getContext("2d");
         }
 
-        updatePlayerData(player: Player) {
+        updateWorldInformation(info: Array<PlayerData>) {
             var self = this;
-
-            self.player = player;
-            //self._controller.updatePlayerData(self.player);
-        }
+            self.otherPlayers = info;
+        };
 
         createCanvas(width: number, height: number): HTMLCanvasElement {
             var canvas = document.createElement("canvas");
@@ -97,6 +102,7 @@ export module MapRenderer {
                 self._previousDrawingTime = currentTime;
 
                 if (timeDelta > self._config.interval) {
+                    self.drawOtherCharacters();
                     self.drawUserMap();
                     self.drawCharacter();
                     self.drawMenu();
@@ -149,6 +155,7 @@ export module MapRenderer {
 
             self.viewPortContext.clearRect(0, 0, self.viewPortCanvas.width, self.viewPortCanvas.height);
             self.viewPortContext.drawImage(self.wholeMapCanvas, srcXPoint, srcYPoint, self.viewPortCanvas.width, self.viewPortCanvas.height, 0, 0, self.viewPortCanvas.width, self.viewPortCanvas.height);
+            self.viewPortContext.drawImage(self.otherPlayersCanvas, srcXPoint, srcYPoint, self.viewPortCanvas.width, self.viewPortCanvas.height, 0, 0, self.viewPortCanvas.width, self.viewPortCanvas.height);
         }
 
         drawMenu() {
@@ -168,6 +175,18 @@ export module MapRenderer {
             var self = this;
 
             self.guiContext.drawImage(self.elements.elements.get("Border0").value, 0, 0);
+        }
+
+        drawOtherCharacters() {
+            var self = this;
+            var playersData = self.otherPlayers;
+
+            self.otherPlayersContext.clearRect(0, 0, self.otherPlayersCanvas.width, self.otherPlayersCanvas.height);
+            if (playersData) {
+                playersData.forEach(function (player: PlayerData) {
+                    self.otherPlayersContext.drawImage(self.elements.elements.get("BasicPlayer8").value, 0, 0, 96, 96, player.positionX, player.positionY, 96, 96);
+                });
+            }
         }
 
         counter: number = 0;

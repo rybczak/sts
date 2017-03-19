@@ -5,15 +5,18 @@ const _entities_1 = require("../../common/entities/_entities");
 var MapRenderer;
 (function (MapRenderer) {
     class Renderer {
-        constructor(player) {
+        constructor(player, otherPlayers) {
             this.counter = 0;
             this.currentFrame = 0;
             this._config = new _entities_1.MapDrawingConfig(require("../config/mapDrawingConfig.json"));
             this.player = player;
             var playerData = this.player.getPlayerData();
             this.playerOnMap = new _entities_1.MapPlayer(playerData.positionX, playerData.positionY);
+            this.otherPlayers = otherPlayers;
             this.wholeMapCanvas = this.createCanvas(this._config.mapWidth, this._config.mapHeight);
             this.wholeMapContext = this.wholeMapCanvas.getContext("2d");
+            this.otherPlayersCanvas = this.createCanvas(this._config.mapWidth, this._config.mapHeight);
+            this.otherPlayersContext = this.otherPlayersCanvas.getContext("2d");
             this.viewPortCanvas = this.createCanvas(this._config.viewPortWidth, this._config.viewPortHeight);
             this.viewPortContext = this.viewPortCanvas.getContext("2d");
             this.guiCanvas = this.createCanvas(this._config.screenWidth, this._config.screenHeight);
@@ -21,10 +24,11 @@ var MapRenderer;
             this.playerCanvas = this.createCanvas(this._config.viewPortWidth, this._config.viewPortHeight);
             this.playerContext = this.playerCanvas.getContext("2d");
         }
-        updatePlayerData(player) {
+        updateWorldInformation(info) {
             var self = this;
-            self.player = player;
+            self.otherPlayers = info;
         }
+        ;
         createCanvas(width, height) {
             var canvas = document.createElement("canvas");
             canvas.width = width;
@@ -52,6 +56,7 @@ var MapRenderer;
                 var timeDelta = currentTime - self._previousDrawingTime;
                 self._previousDrawingTime = currentTime;
                 if (timeDelta > self._config.interval) {
+                    self.drawOtherCharacters();
                     self.drawUserMap();
                     self.drawCharacter();
                     self.drawMenu();
@@ -102,6 +107,7 @@ var MapRenderer;
             }
             self.viewPortContext.clearRect(0, 0, self.viewPortCanvas.width, self.viewPortCanvas.height);
             self.viewPortContext.drawImage(self.wholeMapCanvas, srcXPoint, srcYPoint, self.viewPortCanvas.width, self.viewPortCanvas.height, 0, 0, self.viewPortCanvas.width, self.viewPortCanvas.height);
+            self.viewPortContext.drawImage(self.otherPlayersCanvas, srcXPoint, srcYPoint, self.viewPortCanvas.width, self.viewPortCanvas.height, 0, 0, self.viewPortCanvas.width, self.viewPortCanvas.height);
         }
         drawMenu() {
             var self = this;
@@ -114,6 +120,16 @@ var MapRenderer;
         drawBorder() {
             var self = this;
             self.guiContext.drawImage(self.elements.elements.get("Border0").value, 0, 0);
+        }
+        drawOtherCharacters() {
+            var self = this;
+            var playersData = self.otherPlayers;
+            self.otherPlayersContext.clearRect(0, 0, self.otherPlayersCanvas.width, self.otherPlayersCanvas.height);
+            if (playersData) {
+                playersData.forEach(function (player) {
+                    self.otherPlayersContext.drawImage(self.elements.elements.get("BasicPlayer8").value, 0, 0, 96, 96, player.positionX, player.positionY);
+                });
+            }
         }
         drawCharacter() {
             var self = this;

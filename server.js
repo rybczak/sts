@@ -34,10 +34,10 @@ sio.sockets.on('connection', function (client) {
         gameServer.removePlayer(client.userid);
         console.log('\t :: socket.io :: player ' + client.userid + ' disconnected');
     });
-
-    setInterval(function() {
-        var player = gameServer.getPlayer(client.userid);
-        client.emit('update', { player: player });
-        console.log('\t :: socket.io :: update');
-    }, 1000);
 });
+
+setInterval(function() {
+        var data = gameServer.getData();
+        sio.sockets.emit('update', { data: data });
+        console.log('\t :: socket.io :: update');
+}, 1000);
