@@ -6,7 +6,7 @@ import * as ma from "./map/assets";
 import mapAssets = ma.MapAssets;
 import * as entities from "../common/entities/_entities";
 import * as r from "./map/renderer";
-import { Player } from "../common/entities/_entities";
+import { Player, PlayerData } from "../common/entities/_entities";
 import { IPlayerDataJson } from "../common/interfaces/_interfaces";
 import { MapController } from "./map/userController";
 import { EventEmitter } from "events";
@@ -17,7 +17,7 @@ export class Client {
     public socket: any;
     public connected: boolean;
     public player: Player;
-    public otherPlayers: Array<IPlayerDataJson>;
+    public otherPlayers: Array<PlayerData>;
     public renderer: r.MapRenderer.Renderer;
     public controller: MapController.UserController;
     public emitter: EventEmitter;

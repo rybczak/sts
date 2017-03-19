@@ -23,7 +23,7 @@ sio.sockets.on('connection', function (client) {
     client.emit('onconnected', { player: newPlayer });
     //game on client connect behaviour
     console.log('\t :: socket.io :: player ' + client.userid + ' connected');
-    
+
     client.on('message', function (msg) {
         //add data to processing queue
         console.log('\t :: socket.io :: message received: { ' + msg.id + ', ' + msg.move + ' }');
@@ -36,8 +36,8 @@ sio.sockets.on('connection', function (client) {
     });
 });
 
-setInterval(function() {
-        var data = gameServer.getData();
-        sio.sockets.emit('update', { data: data });
-        console.log('\t :: socket.io :: update');
-}, 1000);
+setInterval(function () {
+    var data = gameServer.getData();
+    sio.sockets.emit('update', { data: data });
+    console.log('\t :: socket.io :: update');
+}, 100);

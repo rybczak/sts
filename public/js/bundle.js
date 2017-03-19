@@ -28,7 +28,14 @@ var PlayerData = (function () {
         this.id = id;
         this.positionX = 0;
         this.positionY = 0;
+        this.currentImage = "BasicPlayer8";
+        this.frameCounter = 2;
     }
+    PlayerData.prototype.updateMovementSpriteInfo = function (spriteName, noImagesInSprite) {
+        var self = this;
+        self.currentImage = spriteName;
+        self.frameCounter = noImagesInSprite;
+    };
     return PlayerData;
 }());
 exports.PlayerData = PlayerData;
@@ -233,9 +240,6 @@ var MapRenderer;
                 requestAnimationFrame(function () { return self.drawArea(); });
             });
         };
-        Renderer.prototype.update = function () {
-            var lint = "fuck you";
-        };
         Renderer.prototype.drawArea = function () {
             var self = this;
             if (self._initialized) {
@@ -315,7 +319,15 @@ var MapRenderer;
             self.otherPlayersContext.clearRect(0, 0, self.otherPlayersCanvas.width, self.otherPlayersCanvas.height);
             if (playersData) {
                 playersData.forEach(function (player) {
-                    self.otherPlayersContext.drawImage(self.elements.elements.get("BasicPlayer8").value, 0, 0, 96, 96, player.positionX, player.positionY, 96, 96);
+                    var frameSpeed = 10;
+                    var frameEnd = player.frameCounter;
+                    if (self.counter === (frameSpeed - 1)) {
+                        self.currentFrame = (self.currentFrame + 1) % frameEnd;
+                    }
+                    self.counter = (self.counter + 1) % frameSpeed;
+                    var row = 0;
+                    var col = Math.floor(self.currentFrame % frameEnd);
+                    self.otherPlayersContext.drawImage(self.elements.elements.get(player.currentImage).value, col * 96, row * 96, 96, 96, player.positionX, player.positionY, 96, 96);
                 });
             }
         };
@@ -323,13 +335,13 @@ var MapRenderer;
             var self = this;
             var playerData = this.player.getPlayerData();
             var frameSpeed = 10;
-            var frameEnd = self.player.frameCounter;
+            var frameEnd = playerData.frameCounter;
             if (self.counter === (frameSpeed - 1)) {
                 self.currentFrame = (self.currentFrame + 1) % frameEnd;
             }
             self.counter = (self.counter + 1) % frameSpeed;
-            var row = Math.floor(self.currentFrame / 4);
-            var col = Math.floor(self.currentFrame % 4);
+            var row = 0;
+            var col = Math.floor(self.currentFrame % frameEnd);
             if (playerData.positionX < self.playerCanvas.width / 2) {
                 this.playerOnMap.positionXOnMap = playerData.positionX;
             }
@@ -349,7 +361,7 @@ var MapRenderer;
                 this.playerOnMap.positionYOnMap = (this.playerCanvas.height / 2) - (self._config.movementSize / 2);
             }
             self.playerContext.clearRect(0, 0, self.playerCanvas.width, self.playerCanvas.height);
-            self.playerContext.drawImage(self.elements.elements.get(self.player.currentImage).value, col * 96, row * 96, 96, 96, self.playerOnMap.positionXOnMap, self.playerOnMap.positionYOnMap, 96, 96);
+            self.playerContext.drawImage(self.elements.elements.get(playerData.currentImage).value, col * 96, row * 96, 96, 96, self.playerOnMap.positionXOnMap, self.playerOnMap.positionYOnMap, 96, 96);
         };
         return Renderer;
     }());
@@ -535,8 +547,6 @@ var Player = (function () {
         this._worldHeight = worldHeight;
         this._worldWidth = worldWidth;
         this._data = new playerData_1.PlayerData(id);
-        this.currentImage = "BasicPlayer8";
-        this.frameCounter = 2;
     }
     Player.prototype.getPlayerData = function () {
         var self = this;
@@ -554,29 +564,25 @@ var Player = (function () {
                 if (self._data.positionY - self._movementSize >= 0) {
                     self._data.positionY -= self._movementSize;
                 }
-                self.currentImage = "BasicPlayer4";
-                self.frameCounter = 4;
+                self._data.updateMovementSpriteInfo("BasicPlayer4", 4);
                 break;
             case enums_1.Direction.Down:
                 if (self._data.positionY + self._movementSize < self._worldHeight) {
                     self._data.positionY += self._movementSize;
                 }
-                self.currentImage = "BasicPlayer7";
-                self.frameCounter = 4;
+                self._data.updateMovementSpriteInfo("BasicPlayer7", 4);
                 break;
             case enums_1.Direction.Left:
                 if (self._data.positionX - self._movementSize >= 0) {
                     self._data.positionX -= self._movementSize;
                 }
-                self.currentImage = "BasicPlayer9";
-                self.frameCounter = 4;
+                self._data.updateMovementSpriteInfo("BasicPlayer9", 4);
                 break;
             case enums_1.Direction.Right:
                 if (self._data.positionX + self._movementSize < self._worldWidth) {
                     self._data.positionX += self._movementSize;
                 }
-                self.currentImage = "BasicPlayer1";
-                self.frameCounter = 4;
+                self._data.updateMovementSpriteInfo("BasicPlayer1", 4);
                 break;
             default:
                 console.log("Player :: Not supported move.");
@@ -587,20 +593,16 @@ var Player = (function () {
         var self = this;
         switch (direction) {
             case enums_1.Direction.Up:
-                self.currentImage = "BasicPlayer5";
-                self.frameCounter = 2;
+                self._data.updateMovementSpriteInfo("BasicPlayer5", 2);
                 break;
             case enums_1.Direction.Down:
-                self.currentImage = "BasicPlayer8";
-                self.frameCounter = 2;
+                self._data.updateMovementSpriteInfo("BasicPlayer8", 2);
                 break;
             case enums_1.Direction.Left:
-                self.currentImage = "BasicPlayer9";
-                self.frameCounter = 1;
+                self._data.updateMovementSpriteInfo("BasicPlayer9", 1);
                 break;
             case enums_1.Direction.Right:
-                self.currentImage = "BasicPlayer2";
-                self.frameCounter = 1;
+                self._data.updateMovementSpriteInfo("BasicPlayer2", 1);
                 break;
             default:
                 console.log("Player :: Not supported move.");

@@ -8,8 +8,6 @@ class Player {
         this._worldHeight = worldHeight;
         this._worldWidth = worldWidth;
         this._data = new playerData_1.PlayerData(id);
-        this.currentImage = "BasicPlayer8";
-        this.frameCounter = 2;
     }
     getPlayerData() {
         var self = this;
@@ -27,29 +25,25 @@ class Player {
                 if (self._data.positionY - self._movementSize >= 0) {
                     self._data.positionY -= self._movementSize;
                 }
-                self.currentImage = "BasicPlayer4";
-                self.frameCounter = 4;
+                self._data.updateMovementSpriteInfo("BasicPlayer4", 4);
                 break;
             case enums_1.Direction.Down:
                 if (self._data.positionY + self._movementSize < self._worldHeight) {
                     self._data.positionY += self._movementSize;
                 }
-                self.currentImage = "BasicPlayer7";
-                self.frameCounter = 4;
+                self._data.updateMovementSpriteInfo("BasicPlayer7", 4);
                 break;
             case enums_1.Direction.Left:
                 if (self._data.positionX - self._movementSize >= 0) {
                     self._data.positionX -= self._movementSize;
                 }
-                self.currentImage = "BasicPlayer9";
-                self.frameCounter = 4;
+                self._data.updateMovementSpriteInfo("BasicPlayer9", 4);
                 break;
             case enums_1.Direction.Right:
                 if (self._data.positionX + self._movementSize < self._worldWidth) {
                     self._data.positionX += self._movementSize;
                 }
-                self.currentImage = "BasicPlayer1";
-                self.frameCounter = 4;
+                self._data.updateMovementSpriteInfo("BasicPlayer1", 4);
                 break;
             default:
                 console.log("Player :: Not supported move.");
@@ -60,20 +54,16 @@ class Player {
         var self = this;
         switch (direction) {
             case enums_1.Direction.Up:
-                self.currentImage = "BasicPlayer5";
-                self.frameCounter = 2;
+                self._data.updateMovementSpriteInfo("BasicPlayer5", 2);
                 break;
             case enums_1.Direction.Down:
-                self.currentImage = "BasicPlayer8";
-                self.frameCounter = 2;
+                self._data.updateMovementSpriteInfo("BasicPlayer8", 2);
                 break;
             case enums_1.Direction.Left:
-                self.currentImage = "BasicPlayer9";
-                self.frameCounter = 1;
+                self._data.updateMovementSpriteInfo("BasicPlayer9", 1);
                 break;
             case enums_1.Direction.Right:
-                self.currentImage = "BasicPlayer2";
-                self.frameCounter = 1;
+                self._data.updateMovementSpriteInfo("BasicPlayer2", 1);
                 break;
             default:
                 console.log("Player :: Not supported move.");

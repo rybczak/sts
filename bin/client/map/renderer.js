@@ -45,9 +45,6 @@ var MapRenderer;
                 requestAnimationFrame(() => self.drawArea());
             });
         }
-        update() {
-            var lint = "fuck you";
-        }
         drawArea() {
             var self = this;
             if (self._initialized) {
@@ -127,7 +124,15 @@ var MapRenderer;
             self.otherPlayersContext.clearRect(0, 0, self.otherPlayersCanvas.width, self.otherPlayersCanvas.height);
             if (playersData) {
                 playersData.forEach(function (player) {
-                    self.otherPlayersContext.drawImage(self.elements.elements.get("BasicPlayer8").value, 0, 0, 96, 96, player.positionX, player.positionY);
+                    var frameSpeed = 10;
+                    var frameEnd = player.frameCounter;
+                    if (self.counter === (frameSpeed - 1)) {
+                        self.currentFrame = (self.currentFrame + 1) % frameEnd;
+                    }
+                    self.counter = (self.counter + 1) % frameSpeed;
+                    var row = 0;
+                    var col = Math.floor(self.currentFrame % frameEnd);
+                    self.otherPlayersContext.drawImage(self.elements.elements.get(player.currentImage).value, col * 96, row * 96, 96, 96, player.positionX, player.positionY, 96, 96);
                 });
             }
         }
@@ -135,13 +140,13 @@ var MapRenderer;
             var self = this;
             var playerData = this.player.getPlayerData();
             var frameSpeed = 10;
-            var frameEnd = self.player.frameCounter;
+            var frameEnd = playerData.frameCounter;
             if (self.counter === (frameSpeed - 1)) {
                 self.currentFrame = (self.currentFrame + 1) % frameEnd;
             }
             self.counter = (self.counter + 1) % frameSpeed;
-            var row = Math.floor(self.currentFrame / 4);
-            var col = Math.floor(self.currentFrame % 4);
+            var row = 0;
+            var col = Math.floor(self.currentFrame % frameEnd);
             if (playerData.positionX < self.playerCanvas.width / 2) {
                 this.playerOnMap.positionXOnMap = playerData.positionX;
             }
@@ -161,7 +166,7 @@ var MapRenderer;
                 this.playerOnMap.positionYOnMap = (this.playerCanvas.height / 2) - (self._config.movementSize / 2);
             }
             self.playerContext.clearRect(0, 0, self.playerCanvas.width, self.playerCanvas.height);
-            self.playerContext.drawImage(self.elements.elements.get(self.player.currentImage).value, col * 96, row * 96, 96, 96, self.playerOnMap.positionXOnMap, self.playerOnMap.positionYOnMap, 96, 96);
+            self.playerContext.drawImage(self.elements.elements.get(playerData.currentImage).value, col * 96, row * 96, 96, 96, self.playerOnMap.positionXOnMap, self.playerOnMap.positionYOnMap, 96, 96);
         }
     }
     MapRenderer.Renderer = Renderer;

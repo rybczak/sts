@@ -7,4 +7,8 @@ export interface IPlayerDataJson {
     positionX: number;
 
     positionY: number;
+
+    currentImage: string;
+
+    frameCounter: number;
 }

@@ -86,11 +86,6 @@ export module MapRenderer {
             });
         }
 
-        //todo update data to render (after server update to get fresh valid data on screen)
-        update() {
-            var lint = "fuck you";
-        }
-
         drawArea() {
             var self = this;
 
@@ -184,7 +179,20 @@ export module MapRenderer {
             self.otherPlayersContext.clearRect(0, 0, self.otherPlayersCanvas.width, self.otherPlayersCanvas.height);
             if (playersData) {
                 playersData.forEach(function (player: PlayerData) {
-                    self.otherPlayersContext.drawImage(self.elements.elements.get("BasicPlayer8").value, 0, 0, 96, 96, player.positionX, player.positionY, 96, 96);
+                    //animation
+                    var frameSpeed = 10;
+                    var frameEnd = player.frameCounter;
+
+                    if (self.counter === (frameSpeed - 1)) {
+                        self.currentFrame = (self.currentFrame + 1) % frameEnd;
+                    }
+                    self.counter = (self.counter + 1) % frameSpeed;
+
+                    var row = 0;
+                    var col = Math.floor(self.currentFrame % frameEnd);
+                    //animation
+
+                    self.otherPlayersContext.drawImage(self.elements.elements.get(player.currentImage).value, col * 96, row * 96, 96, 96, player.positionX, player.positionY, 96, 96);
                 });
             }
         }
@@ -197,15 +205,15 @@ export module MapRenderer {
 
             //animation
             var frameSpeed = 10;
-            var frameEnd = self.player.frameCounter;
+            var frameEnd = playerData.frameCounter;
 
             if (self.counter === (frameSpeed - 1)) {
                 self.currentFrame = (self.currentFrame + 1) % frameEnd;
             }
             self.counter = (self.counter + 1) % frameSpeed;
 
-            var row = Math.floor(self.currentFrame / 4);
-            var col = Math.floor(self.currentFrame % 4);
+            var row = 0;
+            var col = Math.floor(self.currentFrame % frameEnd);
             //animation
 
 
@@ -227,7 +235,7 @@ export module MapRenderer {
 
             self.playerContext.clearRect(0, 0, self.playerCanvas.width, self.playerCanvas.height);
             self.playerContext.drawImage(
-                self.elements.elements.get(self.player.currentImage).value,
+                self.elements.elements.get(playerData.currentImage).value,
                 col * 96, row * 96,
                 96, 96,
                 self.playerOnMap.positionXOnMap, self.playerOnMap.positionYOnMap,
