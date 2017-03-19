@@ -193,6 +193,8 @@ export module MapRenderer {
                     //animation
 
                     self.otherPlayersContext.drawImage(self.elements.elements.get(player.currentImage).value, col * 96, row * 96, 96, 96, player.positionX, player.positionY, 96, 96);
+                    var textWidth = self.playerContext.measureText(player.name).width;
+                    self.otherPlayersContext.fillText(player.name, player.positionX + (48 - textWidth / 2), player.positionY + 10);
                 });
             }
         }
@@ -241,11 +243,8 @@ export module MapRenderer {
                 self.playerOnMap.positionXOnMap, self.playerOnMap.positionYOnMap,
                 96, 96);
 
-            // if (self.player.mirrorEdge) {
-            //     self.playerContext.scale(-1, 1);
-            // } else {
-            //     self.playerContext.scale(0, 0);
-            // }
+            var textWidth = self.playerContext.measureText(playerData.name).width;
+            self.playerContext.fillText(playerData.name, self.playerOnMap.positionXOnMap + (48 - textWidth / 2), self.playerOnMap.positionYOnMap + 10);
         }
     }
 }

@@ -26,6 +26,7 @@ exports.__esModule = true;
 var PlayerData = (function () {
     function PlayerData(id) {
         this.id = id;
+        this.name = "Player" + Math.floor(Math.random() * (99999 - 0 + 1)) + 0;
         this.positionX = 0;
         this.positionY = 0;
         this.currentImage = "BasicPlayer8";
@@ -328,6 +329,8 @@ var MapRenderer;
                     var row = 0;
                     var col = Math.floor(self.currentFrame % frameEnd);
                     self.otherPlayersContext.drawImage(self.elements.elements.get(player.currentImage).value, col * 96, row * 96, 96, 96, player.positionX, player.positionY, 96, 96);
+                    var textWidth = self.playerContext.measureText(player.name).width;
+                    self.otherPlayersContext.fillText(player.name, player.positionX + (48 - textWidth / 2), player.positionY + 10);
                 });
             }
         };
@@ -362,6 +365,8 @@ var MapRenderer;
             }
             self.playerContext.clearRect(0, 0, self.playerCanvas.width, self.playerCanvas.height);
             self.playerContext.drawImage(self.elements.elements.get(playerData.currentImage).value, col * 96, row * 96, 96, 96, self.playerOnMap.positionXOnMap, self.playerOnMap.positionYOnMap, 96, 96);
+            var textWidth = self.playerContext.measureText(playerData.name).width;
+            self.playerContext.fillText(playerData.name, self.playerOnMap.positionXOnMap + (48 - textWidth / 2), self.playerOnMap.positionYOnMap + 10);
         };
         return Renderer;
     }());

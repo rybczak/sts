@@ -5,6 +5,8 @@ import { IPlayerDataJson } from "../interfaces/_interfaces";
 export class PlayerData implements IPlayerDataJson {
     id: any;
 
+    name: string;
+
     positionX: number;
 
     positionY: number;
@@ -13,8 +15,9 @@ export class PlayerData implements IPlayerDataJson {
 
     frameCounter: number;
 
-    constructor (id: any) {
+    constructor(id: any) {
         this.id = id;
+        this.name = "Player" + Math.floor(Math.random() * (99999 - 0 + 1)) + 0;
         this.positionX = 0;
         this.positionY = 0;
         this.currentImage = "BasicPlayer8";

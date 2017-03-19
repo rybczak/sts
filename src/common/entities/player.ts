@@ -17,14 +17,11 @@ export class Player {
 
     //previousPositionY: number;
 
-    //playerEmitter: EventEmitter;
-
     constructor(id: any, movemenetSize: number, worldHeight: number, worldWidth: number) {
         this._movementSize = movemenetSize;
         this._worldHeight = worldHeight;
         this._worldWidth = worldWidth;
         this._data = new PlayerData(id);
-        // this.playerEmitter = new EventEmitter();
     }
 
     getPlayerData(): IPlayerDataJson {
