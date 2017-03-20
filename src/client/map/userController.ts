@@ -10,6 +10,7 @@ export module MapController {
         private _config: any;
         private _player: Player;
         private _emitter: EventEmitter;
+        private _sequence: number = 0;
 
         constructor(player: Player, emitter: EventEmitter) {
             this._player = player;
@@ -21,36 +22,40 @@ export module MapController {
             self._player = player;
         }
 
+        //instead Date.now add server date synchronization
         registerArrowKeys() {
             var self = this;
 
             document.onkeydown = function (event: KeyboardEvent) {
                 var direction: Direction;
+                var date = Date.now();
+                var sequence = "seq" + self._sequence;
 
                 switch (event.keyCode) {
                     case 38:
                         direction = Direction.Up;
-                        self._player.updatePosition(direction);
+                        self._player.updatePosition(direction, date, sequence);
                         event.preventDefault();
                         break;
                     case 40:
                         direction = Direction.Down;
-                        self._player.updatePosition(direction);
+                        self._player.updatePosition(direction, date, sequence);
                         event.preventDefault();
                         break;
                     case 37:
                         direction = Direction.Left;
-                        self._player.updatePosition(direction);
+                        self._player.updatePosition(direction, date, sequence);
                         event.preventDefault();
                         break;
                     case 39:
                         direction = Direction.Right;
-                        self._player.updatePosition(direction);
+                        self._player.updatePosition(direction, date, sequence);
                         event.preventDefault();
                         break;
                 }
 
-                self._emitter.emit("playerMove", direction);
+                self._emitter.emit("playerMove", { direction: direction, sequence: sequence, date: date, move: direction });
+                self._sequence++;
             };
 
             document.onkeyup = function (event: KeyboardEvent) {

@@ -27,9 +27,9 @@ export class Client {
 
         self.player = new Player(0, 48, 3360, 3360);
         self.emitter = new EventEmitter();
-        self.emitter.on("playerMove", function (move: any) {
-            self.socket.emit("message", { id: self.player.getPlayerData().id, move: move });
-            console.log(move);
+        self.emitter.on("playerMove", function (data: any) {
+            self.socket.emit("message", { id: self.player.getPlayerData().id, move: data.move, date: data.date, sequence: data.sequence });
+            console.log("Move: " + data.move);
         });
         self.controller = new MapController.UserController(self.player, self.emitter);
         self.controller.registerArrowKeys();
@@ -51,6 +51,7 @@ export class Client {
                 var player = result.data[x];
                 if (player.id === self.player.getPlayerData().id) {
                     self.player.updatePlayerData(player);
+                    console.log("Last processed sequence: " + player.sequence);
                     currentPlayerIndex = x;
                 }
             }

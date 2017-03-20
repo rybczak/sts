@@ -16,10 +16,10 @@ class GameServer {
         var self = this;
         self.players.remove(userID);
     }
-    movePlayer(userID, userMove) {
+    movePlayer(date, sequence, userID, userMove) {
         var self = this;
         var data = self.players.get(userID);
-        data.updatePosition(userMove);
+        data.updatePosition(userMove, date, sequence);
     }
     getData() {
         var self = this;

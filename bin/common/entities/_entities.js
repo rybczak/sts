@@ -10,3 +10,4 @@ __export(require("./enums"));
 __export(require("./assetConfig"));
 __export(require("./mapDrawingConfig"));
 __export(require("./playerData"));
+__export(require("./playerActionHistory"));

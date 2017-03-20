@@ -28,11 +28,11 @@ export class GameServer {
         self.players.remove(userID);
     }
 
-    movePlayer(userID: any, userMove: Direction) {
+    movePlayer(date: number, sequence: string, userID: any, userMove: Direction) {
         var self = this;
         var data = self.players.get(userID);
 
-        data.updatePosition(userMove);
+        data.updatePosition(userMove, date, sequence);
     }
 
     getData(): Array<IPlayerDataJson> {

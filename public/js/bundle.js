@@ -23,6 +23,26 @@ var Direction;
 "use strict";
 
 exports.__esModule = true;
+var PlayerActionHistory = (function () {
+    function PlayerActionHistory(date, sequence, name, value) {
+        this.timestamp = date;
+        this.sequence = sequence;
+        this.actionName = name;
+        this.actionValue = value;
+    }
+    return PlayerActionHistory;
+}());
+exports.PlayerActionHistory = PlayerActionHistory;
+
+
+/***/ }),
+
+/***/ 15:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+exports.__esModule = true;
 var PlayerData = (function () {
     function PlayerData(id) {
         this.id = id;
@@ -53,18 +73,19 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 exports.__esModule = true;
-__export(__webpack_require__(38));
-__export(__webpack_require__(41));
-__export(__webpack_require__(40));
-__export(__webpack_require__(13));
-__export(__webpack_require__(37));
 __export(__webpack_require__(39));
+__export(__webpack_require__(42));
+__export(__webpack_require__(41));
+__export(__webpack_require__(13));
+__export(__webpack_require__(38));
+__export(__webpack_require__(40));
+__export(__webpack_require__(15));
 __export(__webpack_require__(14));
 
 
 /***/ }),
 
-/***/ 30:
+/***/ 31:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -72,19 +93,19 @@ __export(__webpack_require__(14));
 exports.__esModule = true;
 var $ = __webpack_require__(1);
 var io = __webpack_require__(12);
-var r = __webpack_require__(35);
+var r = __webpack_require__(36);
 var _entities_1 = __webpack_require__(3);
-var userController_1 = __webpack_require__(36);
-var events_1 = __webpack_require__(70);
+var userController_1 = __webpack_require__(37);
+var events_1 = __webpack_require__(71);
 var Client = (function () {
     function Client() {
         this._messageSequence = 0;
         var self = this;
         self.player = new _entities_1.Player(0, 48, 3360, 3360);
         self.emitter = new events_1.EventEmitter();
-        self.emitter.on("playerMove", function (move) {
-            self.socket.emit("message", { id: self.player.getPlayerData().id, move: move });
-            console.log(move);
+        self.emitter.on("playerMove", function (data) {
+            self.socket.emit("message", { id: self.player.getPlayerData().id, move: data.move, date: data.date, sequence: data.sequence });
+            console.log("Move: " + data.move);
         });
         self.controller = new userController_1.MapController.UserController(self.player, self.emitter);
         self.controller.registerArrowKeys();
@@ -102,6 +123,7 @@ var Client = (function () {
                 var player = result.data[x];
                 if (player.id === self.player.getPlayerData().id) {
                     self.player.updatePlayerData(player);
+                    console.log("Last processed sequence: " + player.sequence);
                     currentPlayerIndex = x;
                 }
             }
@@ -143,20 +165,20 @@ $(".panel-actions-hide").on("click", function () {
 
 /***/ }),
 
-/***/ 34:
+/***/ 35:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 exports.__esModule = true;
 var _entities_1 = __webpack_require__(3);
-var _helpers_1 = __webpack_require__(42);
+var _helpers_1 = __webpack_require__(43);
 var MapAssets;
 (function (MapAssets) {
     var MapElements = (function () {
         function MapElements() {
             this.elements = new _helpers_1.Dictionary();
-            this._config = new _entities_1.AssetConfig(__webpack_require__(86));
+            this._config = new _entities_1.AssetConfig(__webpack_require__(87));
         }
         MapElements.prototype.load = function () {
             var self = this;
@@ -190,13 +212,13 @@ var MapAssets;
 
 /***/ }),
 
-/***/ 35:
+/***/ 36:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 exports.__esModule = true;
-var assets_1 = __webpack_require__(34);
+var assets_1 = __webpack_require__(35);
 var _entities_1 = __webpack_require__(3);
 var MapRenderer;
 (function (MapRenderer) {
@@ -204,7 +226,7 @@ var MapRenderer;
         function Renderer(player, otherPlayers) {
             this.counter = 0;
             this.currentFrame = 0;
-            this._config = new _entities_1.MapDrawingConfig(__webpack_require__(85));
+            this._config = new _entities_1.MapDrawingConfig(__webpack_require__(86));
             this.player = player;
             var playerData = this.player.getPlayerData();
             this.playerOnMap = new _entities_1.MapPlayer(playerData.positionX, playerData.positionY);
@@ -376,7 +398,7 @@ var MapRenderer;
 
 /***/ }),
 
-/***/ 36:
+/***/ 37:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -387,6 +409,7 @@ var MapController;
 (function (MapController) {
     var UserController = (function () {
         function UserController(player, emitter) {
+            this._sequence = 0;
             this._player = player;
             this._emitter = emitter;
         }
@@ -398,29 +421,32 @@ var MapController;
             var self = this;
             document.onkeydown = function (event) {
                 var direction;
+                var date = Date.now();
+                var sequence = "seq" + self._sequence;
                 switch (event.keyCode) {
                     case 38:
                         direction = _entities_1.Direction.Up;
-                        self._player.updatePosition(direction);
+                        self._player.updatePosition(direction, date, sequence);
                         event.preventDefault();
                         break;
                     case 40:
                         direction = _entities_1.Direction.Down;
-                        self._player.updatePosition(direction);
+                        self._player.updatePosition(direction, date, sequence);
                         event.preventDefault();
                         break;
                     case 37:
                         direction = _entities_1.Direction.Left;
-                        self._player.updatePosition(direction);
+                        self._player.updatePosition(direction, date, sequence);
                         event.preventDefault();
                         break;
                     case 39:
                         direction = _entities_1.Direction.Right;
-                        self._player.updatePosition(direction);
+                        self._player.updatePosition(direction, date, sequence);
                         event.preventDefault();
                         break;
                 }
-                self._emitter.emit("playerMove", direction);
+                self._emitter.emit("playerMove", { direction: direction, sequence: sequence, date: date, move: direction });
+                self._sequence++;
             };
             document.onkeyup = function (event) {
                 switch (event.keyCode) {
@@ -451,7 +477,7 @@ var MapController;
 
 /***/ }),
 
-/***/ 37:
+/***/ 38:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -478,7 +504,7 @@ var ConfigElement = (function () {
 
 /***/ }),
 
-/***/ 38:
+/***/ 39:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -494,7 +520,7 @@ exports.Element = Element;
 
 /***/ }),
 
-/***/ 39:
+/***/ 40:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -519,7 +545,7 @@ exports.MapDrawingConfig = MapDrawingConfig;
 
 /***/ }),
 
-/***/ 40:
+/***/ 41:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -538,31 +564,52 @@ exports.MapPlayer = MapPlayer;
 
 /***/ }),
 
-/***/ 41:
+/***/ 42:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 exports.__esModule = true;
 var enums_1 = __webpack_require__(13);
-var playerData_1 = __webpack_require__(14);
+var playerData_1 = __webpack_require__(15);
+var playerActionHistory_1 = __webpack_require__(14);
 var Player = (function () {
     function Player(id, movemenetSize, worldHeight, worldWidth) {
         this._movementSize = movemenetSize;
         this._worldHeight = worldHeight;
         this._worldWidth = worldWidth;
         this._data = new playerData_1.PlayerData(id);
+        this._history = new Array();
     }
     Player.prototype.getPlayerData = function () {
         var self = this;
-        return this._data;
+        var result = this._data;
+        var historyLen = self._history.length - 1;
+        if (historyLen > 0) {
+            var lastMove = self._history[historyLen];
+            result.sequence = lastMove.sequence;
+        }
+        return result;
     };
     Player.prototype.updatePlayerData = function (data) {
-        this._data.id = data.id;
-        this._data.positionX = data.positionX;
-        this._data.positionY = data.positionY;
+        var self = this;
+        self._data.id = data.id;
+        self._data.positionX = data.positionX;
+        self._data.positionY = data.positionY;
+        if (data.sequence) {
+            var sequencePos = -1;
+            for (var x = 0; x < self._history.length; x++) {
+                if (self._history[x].sequence === data.sequence) {
+                    sequencePos = x;
+                }
+            }
+            for (var x = sequencePos + 1; x < self._history.length; x++) {
+                var futureData = self._history[x];
+                self.updatePosition(futureData.actionValue);
+            }
+        }
     };
-    Player.prototype.updatePosition = function (direction) {
+    Player.prototype.updatePosition = function (direction, date, sequence) {
         var self = this;
         switch (direction) {
             case enums_1.Direction.Up:
@@ -593,6 +640,9 @@ var Player = (function () {
                 console.log("Player :: Not supported move.");
                 break;
         }
+        if (date) {
+            self.addHistoryEntry(date, sequence, "move", direction);
+        }
     };
     Player.prototype.resetPosition = function (direction) {
         var self = this;
@@ -614,6 +664,10 @@ var Player = (function () {
                 break;
         }
     };
+    Player.prototype.addHistoryEntry = function (date, sequence, name, value) {
+        var self = this;
+        self._history.push(new playerActionHistory_1.PlayerActionHistory(date, sequence, name, value));
+    };
     return Player;
 }());
 exports.Player = Player;
@@ -621,7 +675,7 @@ exports.Player = Player;
 
 /***/ }),
 
-/***/ 42:
+/***/ 43:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -630,14 +684,14 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 exports.__esModule = true;
-__export(__webpack_require__(43));
-__export(__webpack_require__(45));
 __export(__webpack_require__(44));
+__export(__webpack_require__(46));
+__export(__webpack_require__(45));
 
 
 /***/ }),
 
-/***/ 43:
+/***/ 44:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -692,7 +746,7 @@ exports.Dictionary = Dictionary;
 
 /***/ }),
 
-/***/ 44:
+/***/ 45:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -715,7 +769,7 @@ exports.SplitSpriteRequest = SplitSpriteRequest;
 
 /***/ }),
 
-/***/ 45:
+/***/ 46:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -759,7 +813,7 @@ exports.SpriteManager = SpriteManager;
 
 /***/ }),
 
-/***/ 70:
+/***/ 71:
 /***/ (function(module, exports) {
 
 // Copyright Joyent, Inc. and other Node contributors.
@@ -1068,7 +1122,7 @@ function isUndefined(arg) {
 
 /***/ }),
 
-/***/ 85:
+/***/ 86:
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -1085,7 +1139,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 86:
+/***/ 87:
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -1183,13 +1237,13 @@ module.exports = {
 
 /***/ }),
 
-/***/ 88:
+/***/ 89:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(30);
+module.exports = __webpack_require__(31);
 
 
 /***/ })
 
-},[88]);
+},[89]);
 //# sourceMappingURL=bundle.js.map

@@ -5,6 +5,7 @@ var MapController;
 (function (MapController) {
     class UserController {
         constructor(player, emitter) {
+            this._sequence = 0;
             this._player = player;
             this._emitter = emitter;
         }
@@ -16,29 +17,32 @@ var MapController;
             var self = this;
             document.onkeydown = function (event) {
                 var direction;
+                var date = Date.now();
+                var sequence = "seq" + self._sequence;
                 switch (event.keyCode) {
                     case 38:
                         direction = _entities_1.Direction.Up;
-                        self._player.updatePosition(direction);
+                        self._player.updatePosition(direction, date, sequence);
                         event.preventDefault();
                         break;
                     case 40:
                         direction = _entities_1.Direction.Down;
-                        self._player.updatePosition(direction);
+                        self._player.updatePosition(direction, date, sequence);
                         event.preventDefault();
                         break;
                     case 37:
                         direction = _entities_1.Direction.Left;
-                        self._player.updatePosition(direction);
+                        self._player.updatePosition(direction, date, sequence);
                         event.preventDefault();
                         break;
                     case 39:
                         direction = _entities_1.Direction.Right;
-                        self._player.updatePosition(direction);
+                        self._player.updatePosition(direction, date, sequence);
                         event.preventDefault();
                         break;
                 }
-                self._emitter.emit("playerMove", direction);
+                self._emitter.emit("playerMove", { direction: direction, sequence: sequence, date: date, move: direction });
+                self._sequence++;
             };
             document.onkeyup = function (event) {
                 switch (event.keyCode) {

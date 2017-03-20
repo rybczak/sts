@@ -15,6 +15,8 @@ export class PlayerData implements IPlayerDataJson {
 
     frameCounter: number;
 
+    sequence: string;
+
     constructor(id: any) {
         this.id = id;
         this.name = "Player" + Math.floor(Math.random() * (99999 - 0 + 1)) + 0;

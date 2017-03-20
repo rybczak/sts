@@ -13,4 +13,7 @@ export interface IPlayerDataJson {
     currentImage: string;
 
     frameCounter: number;
+
+    //temp solution
+    sequence: string;
 }

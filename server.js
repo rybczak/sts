@@ -20,14 +20,17 @@ var sio = io.listen(server);
 sio.sockets.on('connection', function (client) {
     client.userid = uuid();
     var newPlayer = gameServer.addNewPlayer(client.userid);
-    client.emit('onconnected', { player: newPlayer });
+    var requests = [];
+
+    client.emit('onconnected', { player: newPlayer, timestamp: Date.now() });
     //game on client connect behaviour
     console.log('\t :: socket.io :: player ' + client.userid + ' connected');
 
     client.on('message', function (msg) {
+        var self = this;
         //add data to processing queue
-        console.log('\t :: socket.io :: message received: { ' + msg.id + ', ' + msg.move + ' }');
-        gameServer.movePlayer(msg.id, msg.move);
+        console.log('\t :: socket.io :: message received: { ' + msg.date + ', ' + msg.sequence + ', ' + msg.id + ', ' + msg.move + ' }');
+        gameServer.movePlayer(msg.date, msg.sequence, msg.id, msg.move);
     });
 
     client.on('disconnect', function () {
@@ -38,6 +41,6 @@ sio.sockets.on('connection', function (client) {
 
 setInterval(function () {
     var data = gameServer.getData();
-    sio.sockets.emit('update', { data: data });
+    sio.sockets.emit('update', { data: data, timestamp: Date.now() });
     console.log('\t :: socket.io :: update');
 }, 100);

@@ -2,6 +2,7 @@
 
 import { Direction } from "./enums";
 import { PlayerData } from "./playerData";
+import { PlayerActionHistory } from "./playerActionHistory";
 import { IPlayerDataJson } from "../interfaces/_interfaces";
 
 export class Player {
@@ -13,6 +14,8 @@ export class Player {
 
     private _data: PlayerData;
 
+    private _history: Array<PlayerActionHistory>;
+
     //previousPositionX: number;
 
     //previousPositionY: number;
@@ -22,25 +25,48 @@ export class Player {
         this._worldHeight = worldHeight;
         this._worldWidth = worldWidth;
         this._data = new PlayerData(id);
+        this._history = new Array<PlayerActionHistory>();
     }
 
     getPlayerData(): IPlayerDataJson {
         var self = this;
-        return this._data;
+        var result = this._data;
+        var historyLen = self._history.length - 1;
+        if (historyLen > 0) {
+            var lastMove = self._history[historyLen];
+            result.sequence = lastMove.sequence;
+        }
+
+        return result;
     }
 
     updatePlayerData(data: IPlayerDataJson) {
-        this._data.id = data.id;
-        this._data.positionX = data.positionX;
-        this._data.positionY = data.positionY;
+        var self = this;
+
+        self._data.id = data.id;
+        self._data.positionX = data.positionX;
+        self._data.positionY = data.positionY;
+
+        if (data.sequence) {
+            var sequencePos = -1;
+            for (var x = 0; x < self._history.length; x++) {
+                if (self._history[x].sequence === data.sequence) {
+                    sequencePos = x;
+                }
+            }
+
+            //works only for one move
+            for (var x = sequencePos + 1; x < self._history.length; x++) {
+                var futureData = self._history[x];
+                self.updatePosition(<Direction>futureData.actionValue);
+            }
+        }
     }
 
     //todo get config
-    //get this functions to new place
-    updatePosition(direction: Direction) {
+    //move setting images to client renderer
+    updatePosition(direction: Direction, date?: number, sequence?: string, ) {
         var self = this;
-        //self.previousPositionX = self.positionX;
-        //self.previousPositionY = self.positionY;
 
         switch (direction) {
             case Direction.Up:
@@ -71,12 +97,15 @@ export class Player {
                 console.log("Player :: Not supported move.");
                 break;
         }
+
+        if (date) {
+            self.addHistoryEntry(date, sequence, "move", direction);
+        }
     }
 
+    //remove this func when moving image seters to renderer
     resetPosition(direction: Direction) {
         var self = this;
-        //self.previousPositionX = self.positionX;
-        //self.previousPositionY = self.positionY;
 
         switch (direction) {
             case Direction.Up:
@@ -95,5 +124,10 @@ export class Player {
                 console.log("Player :: Not supported move.");
                 break;
         }
+    }
+
+    addHistoryEntry(date: number, sequence: string, name: string, value: number) {
+        var self = this;
+        self._history.push(new PlayerActionHistory(date, sequence, name, value));
     }
 }

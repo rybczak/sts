@@ -7,3 +7,4 @@ export * from "./enums";
 export * from "./assetConfig";
 export * from "./mapDrawingConfig";
 export * from "./playerData";
+export * from "./playerActionHistory";
