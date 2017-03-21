@@ -21,6 +21,7 @@ export module MapAssets {
             var promises = new Array<Promise<{}>>();
 
             self._config.sprites.forEach(configSprite => {
+                console.log("Sprite " + configSprite.url + " starts");
                 var promise = new Promise((resolve, reject) => {
                     return SpriteManager
                         .loadSpriteAsync(configSprite.url)
@@ -38,6 +39,7 @@ export module MapAssets {
                                 }
                             });
 
+                            console.log("Sprite " + configSprite.url + " ends");
                             resolve();
                         });
                 });

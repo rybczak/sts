@@ -18,8 +18,8 @@ export class SpriteManager {
         });
     }
 
-    static splitSprite (request: SplitSpriteRequest): Array<HTMLImageElement> {
-        var result: Array<HTMLImageElement> = new Array<HTMLImageElement>();
+    static splitSprite (request: SplitSpriteRequest): Array<HTMLCanvasElement> {
+        var result: Array<HTMLCanvasElement> = new Array<HTMLCanvasElement>();
 
         var splitXEndPoint = request.splitStartXPoint + request.splitAreaWidth;
         var splitYEndPoint = request.splitStartYPoint + request.splitAreaHeight;
@@ -34,9 +34,7 @@ export class SpriteManager {
 
                 canvasContext.drawImage(request.spriteImage, x, y, request.splitTileWidth, request.splitTileHeight, 0, 0, request.splitTileWidth, request.splitTileHeight);
 
-                var tileImage: HTMLImageElement = new Image();
-                tileImage.src = tileCanvas.toDataURL();
-                result.push(tileImage);
+                result.push(tileCanvas);
             }
         }
 

@@ -76,12 +76,7 @@ export module MapRenderer {
 
             Promise.all([self.elements.load()]).then(function () {
                 self._initialized = true;
-
                 self.drawWholeAreaMap();
-
-                //virtual canvas to normal canvas
-
-
                 requestAnimationFrame(() => self.drawArea());
             });
         }
@@ -97,6 +92,7 @@ export module MapRenderer {
                 self._previousDrawingTime = currentTime;
 
                 if (timeDelta > self._config.interval) {
+
                     self.drawOtherCharacters();
                     self.drawUserMap();
                     self.drawCharacter();

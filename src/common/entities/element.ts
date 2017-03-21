@@ -3,5 +3,5 @@
 export class Element {
     name: string;
 
-    value: HTMLImageElement;
+    value: HTMLCanvasElement;
 }

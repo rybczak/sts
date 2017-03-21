@@ -13,6 +13,7 @@ var MapAssets;
             var self = this;
             var promises = new Array();
             self._config.sprites.forEach(configSprite => {
+                console.log("Sprite " + configSprite.url + " starts");
                 var promise = new Promise((resolve, reject) => {
                     return _helpers_1.SpriteManager
                         .loadSpriteAsync(configSprite.url)
@@ -26,6 +27,7 @@ var MapAssets;
                                 self.elements.add(el.name, el);
                             }
                         });
+                        console.log("Sprite " + configSprite.url + " ends");
                         resolve();
                     });
                 });

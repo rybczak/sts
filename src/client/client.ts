@@ -29,19 +29,19 @@ export class Client {
         self.emitter = new EventEmitter();
         self.emitter.on("playerMove", function (data: any) {
             self.socket.emit("message", { id: self.player.getPlayerData().id, move: data.move, date: data.date, sequence: data.sequence });
-            console.log("Move: " + data.move);
+            //console.log("Move: " + data.move);
         });
         self.controller = new MapController.UserController(self.player, self.emitter);
         self.controller.registerArrowKeys();
 
         self.socket = io.connect();
         self.socket.on("connect", function () {
-            console.log("connecting");
+            //console.log("connecting");
         }.bind(this));
 
         self.socket.on("onconnected", function (result: any) {
             self.player.updatePlayerData(result.player);
-            console.log("connected, ID: " + self.player.getPlayerData().id);
+            //console.log("connected, ID: " + self.player.getPlayerData().id);
         });
 
         self.socket.on("update", function (result: any) {
@@ -51,7 +51,7 @@ export class Client {
                 var player = result.data[x];
                 if (player.id === self.player.getPlayerData().id) {
                     self.player.updatePlayerData(player);
-                    console.log("Last processed sequence: " + player.sequence);
+                    //console.log("Last processed sequence: " + player.sequence);
                     currentPlayerIndex = x;
                 }
             }

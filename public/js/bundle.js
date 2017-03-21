@@ -105,17 +105,14 @@ var Client = (function () {
         self.emitter = new events_1.EventEmitter();
         self.emitter.on("playerMove", function (data) {
             self.socket.emit("message", { id: self.player.getPlayerData().id, move: data.move, date: data.date, sequence: data.sequence });
-            console.log("Move: " + data.move);
         });
         self.controller = new userController_1.MapController.UserController(self.player, self.emitter);
         self.controller.registerArrowKeys();
         self.socket = io.connect();
         self.socket.on("connect", function () {
-            console.log("connecting");
         }.bind(this));
         self.socket.on("onconnected", function (result) {
             self.player.updatePlayerData(result.player);
-            console.log("connected, ID: " + self.player.getPlayerData().id);
         });
         self.socket.on("update", function (result) {
             var currentPlayerIndex = -1;
@@ -123,7 +120,6 @@ var Client = (function () {
                 var player = result.data[x];
                 if (player.id === self.player.getPlayerData().id) {
                     self.player.updatePlayerData(player);
-                    console.log("Last processed sequence: " + player.sequence);
                     currentPlayerIndex = x;
                 }
             }
@@ -184,6 +180,7 @@ var MapAssets;
             var self = this;
             var promises = new Array();
             self._config.sprites.forEach(function (configSprite) {
+                console.log("Sprite " + configSprite.url + " starts");
                 var promise = new Promise(function (resolve, reject) {
                     return _helpers_1.SpriteManager
                         .loadSpriteAsync(configSprite.url)
@@ -197,6 +194,7 @@ var MapAssets;
                                 self.elements.add(el.name, el);
                             }
                         });
+                        console.log("Sprite " + configSprite.url + " ends");
                         resolve();
                     });
                 });
@@ -799,9 +797,7 @@ var SpriteManager = (function () {
                 tileCanvas.height = request.splitTileHeight;
                 var canvasContext = tileCanvas.getContext("2d");
                 canvasContext.drawImage(request.spriteImage, x, y, request.splitTileWidth, request.splitTileHeight, 0, 0, request.splitTileWidth, request.splitTileHeight);
-                var tileImage = new Image();
-                tileImage.src = tileCanvas.toDataURL();
-                result.push(tileImage);
+                result.push(tileCanvas);
             }
         }
         return result;

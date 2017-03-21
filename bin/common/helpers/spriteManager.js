@@ -22,9 +22,7 @@ class SpriteManager {
                 tileCanvas.height = request.splitTileHeight;
                 var canvasContext = tileCanvas.getContext("2d");
                 canvasContext.drawImage(request.spriteImage, x, y, request.splitTileWidth, request.splitTileHeight, 0, 0, request.splitTileWidth, request.splitTileHeight);
-                var tileImage = new Image();
-                tileImage.src = tileCanvas.toDataURL();
-                result.push(tileImage);
+                result.push(tileCanvas);
             }
         }
         return result;
