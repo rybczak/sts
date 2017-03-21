@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const $ = require("jquery");
 const io = require("socket.io-client");
 const r = require("./map/renderer");
 const _entities_1 = require("../common/entities/_entities");
@@ -42,26 +41,3 @@ class Client {
 }
 exports.Client = Client;
 var client = new Client();
-$(".panel-actions-hide").on("click", function () {
-    var el = $(".panel-actions-hide");
-    if (el.hasClass("fa-minus")) {
-        $(".panel-actions-hide").removeClass("fa-minus");
-        $(".panel-actions-hide").addClass("fa-plus");
-        $(".panel-heading-name").hide();
-        $(".panel-body-actions").hide();
-        $(".col-panel-actions").removeClass("col-lg-4");
-        $(".col-panel-map").removeClass("col-lg-8");
-        $(".col-panel-actions").addClass("col-lg-1");
-        $(".col-panel-map").addClass("col-lg-11");
-    }
-    else {
-        $(".panel-actions-hide").addClass("fa-minus");
-        $(".panel-actions-hide").removeClass("fa-plus");
-        $(".panel-heading-name").show();
-        $(".panel-body-actions").show();
-        $(".col-panel-actions").removeClass("col-lg-1");
-        $(".col-panel-actions").addClass("col-lg-4");
-        $(".col-panel-map").removeClass("col-lg-11");
-        $(".col-panel-map").addClass("col-lg-8");
-    }
-});

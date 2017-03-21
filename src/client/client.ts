@@ -67,33 +67,3 @@ export class Client {
 }
 
 var client = new Client();
-
-
-//to refactor
-$(".panel-actions-hide").on("click", function () {
-    var el = $(".panel-actions-hide");
-
-    if (el.hasClass("fa-minus")) {
-        $(".panel-actions-hide").removeClass("fa-minus");
-        $(".panel-actions-hide").addClass("fa-plus");
-
-        $(".panel-heading-name").hide();
-        $(".panel-body-actions").hide();
-
-        $(".col-panel-actions").removeClass("col-lg-4");
-        $(".col-panel-map").removeClass("col-lg-8");
-        $(".col-panel-actions").addClass("col-lg-1");
-        $(".col-panel-map").addClass("col-lg-11");
-    } else {
-        $(".panel-actions-hide").addClass("fa-minus");
-        $(".panel-actions-hide").removeClass("fa-plus");
-
-        $(".panel-heading-name").show();
-        $(".panel-body-actions").show();
-
-        $(".col-panel-actions").removeClass("col-lg-1");
-        $(".col-panel-actions").addClass("col-lg-4");
-        $(".col-panel-map").removeClass("col-lg-11");
-        $(".col-panel-map").addClass("col-lg-8");
-    }
-});
