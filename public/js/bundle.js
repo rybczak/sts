@@ -1,37 +1,6 @@
-webpackJsonp([0],[
-/* 0 */,
-/* 1 */,
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
+webpackJsonp([0],{
 
-"use strict";
-
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-exports.__esModule = true;
-__export(__webpack_require__(39));
-__export(__webpack_require__(42));
-__export(__webpack_require__(41));
-__export(__webpack_require__(13));
-__export(__webpack_require__(38));
-__export(__webpack_require__(40));
-__export(__webpack_require__(15));
-__export(__webpack_require__(14));
-
-
-/***/ }),
-/* 3 */,
-/* 4 */,
-/* 5 */,
-/* 6 */,
-/* 7 */,
-/* 8 */,
-/* 9 */,
-/* 10 */,
-/* 11 */,
-/* 12 */,
-/* 13 */
+/***/ 13:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47,7 +16,8 @@ var Direction;
 
 
 /***/ }),
-/* 14 */
+
+/***/ 14:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -66,7 +36,8 @@ exports.PlayerActionHistory = PlayerActionHistory;
 
 
 /***/ }),
-/* 15 */
+
+/***/ 15:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -92,22 +63,29 @@ exports.PlayerData = PlayerData;
 
 
 /***/ }),
-/* 16 */,
-/* 17 */,
-/* 18 */,
-/* 19 */,
-/* 20 */,
-/* 21 */,
-/* 22 */,
-/* 23 */,
-/* 24 */,
-/* 25 */,
-/* 26 */,
-/* 27 */,
-/* 28 */,
-/* 29 */,
-/* 30 */,
-/* 31 */
+
+/***/ 3:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+exports.__esModule = true;
+__export(__webpack_require__(39));
+__export(__webpack_require__(42));
+__export(__webpack_require__(41));
+__export(__webpack_require__(13));
+__export(__webpack_require__(38));
+__export(__webpack_require__(40));
+__export(__webpack_require__(15));
+__export(__webpack_require__(14));
+
+
+/***/ }),
+
+/***/ 31:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -115,9 +93,9 @@ exports.PlayerData = PlayerData;
 exports.__esModule = true;
 var io = __webpack_require__(12);
 var r = __webpack_require__(36);
-var _entities_1 = __webpack_require__(2);
+var _entities_1 = __webpack_require__(3);
 var userController_1 = __webpack_require__(37);
-var events_1 = __webpack_require__(59);
+var events_1 = __webpack_require__(71);
 var Client = (function () {
     function Client() {
         this._messageSequence = 0;
@@ -158,23 +136,21 @@ var client = new Client();
 
 
 /***/ }),
-/* 32 */,
-/* 33 */,
-/* 34 */,
-/* 35 */
+
+/***/ 35:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 exports.__esModule = true;
-var _entities_1 = __webpack_require__(2);
+var _entities_1 = __webpack_require__(3);
 var _helpers_1 = __webpack_require__(43);
 var MapAssets;
 (function (MapAssets) {
     var MapElements = (function () {
         function MapElements() {
             this.elements = new _helpers_1.Dictionary();
-            this._config = new _entities_1.AssetConfig(__webpack_require__(75));
+            this._config = new _entities_1.AssetConfig(__webpack_require__(87));
         }
         MapElements.prototype.load = function () {
             var self = this;
@@ -209,21 +185,22 @@ var MapAssets;
 
 
 /***/ }),
-/* 36 */
+
+/***/ 36:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 exports.__esModule = true;
 var assets_1 = __webpack_require__(35);
-var _entities_1 = __webpack_require__(2);
+var _entities_1 = __webpack_require__(3);
 var MapRenderer;
 (function (MapRenderer) {
     var Renderer = (function () {
         function Renderer(player, otherPlayers) {
             this.counter = 0;
             this.currentFrame = 0;
-            this._config = new _entities_1.MapDrawingConfig(__webpack_require__(74));
+            this._config = new _entities_1.MapDrawingConfig(__webpack_require__(86));
             this.player = player;
             var playerData = this.player.getPlayerData();
             this.playerOnMap = new _entities_1.MapPlayer(playerData.positionX, playerData.positionY);
@@ -394,13 +371,14 @@ var MapRenderer;
 
 
 /***/ }),
-/* 37 */
+
+/***/ 37:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 exports.__esModule = true;
-var _entities_1 = __webpack_require__(2);
+var _entities_1 = __webpack_require__(3);
 var MapController;
 (function (MapController) {
     var UserController = (function () {
@@ -472,7 +450,8 @@ var MapController;
 
 
 /***/ }),
-/* 38 */
+
+/***/ 38:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -498,7 +477,8 @@ var ConfigElement = (function () {
 
 
 /***/ }),
-/* 39 */
+
+/***/ 39:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -513,7 +493,8 @@ exports.Element = Element;
 
 
 /***/ }),
-/* 40 */
+
+/***/ 40:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -537,7 +518,8 @@ exports.MapDrawingConfig = MapDrawingConfig;
 
 
 /***/ }),
-/* 41 */
+
+/***/ 41:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -555,7 +537,8 @@ exports.MapPlayer = MapPlayer;
 
 
 /***/ }),
-/* 42 */
+
+/***/ 42:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -665,7 +648,8 @@ exports.Player = Player;
 
 
 /***/ }),
-/* 43 */
+
+/***/ 43:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -680,7 +664,8 @@ __export(__webpack_require__(45));
 
 
 /***/ }),
-/* 44 */
+
+/***/ 44:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -734,7 +719,8 @@ exports.Dictionary = Dictionary;
 
 
 /***/ }),
-/* 45 */
+
+/***/ 45:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -756,7 +742,8 @@ exports.SplitSpriteRequest = SplitSpriteRequest;
 
 
 /***/ }),
-/* 46 */
+
+/***/ 46:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -797,19 +784,8 @@ exports.SpriteManager = SpriteManager;
 
 
 /***/ }),
-/* 47 */,
-/* 48 */,
-/* 49 */,
-/* 50 */,
-/* 51 */,
-/* 52 */,
-/* 53 */,
-/* 54 */,
-/* 55 */,
-/* 56 */,
-/* 57 */,
-/* 58 */,
-/* 59 */
+
+/***/ 71:
 /***/ (function(module, exports) {
 
 // Copyright Joyent, Inc. and other Node contributors.
@@ -1117,21 +1093,8 @@ function isUndefined(arg) {
 
 
 /***/ }),
-/* 60 */,
-/* 61 */,
-/* 62 */,
-/* 63 */,
-/* 64 */,
-/* 65 */,
-/* 66 */,
-/* 67 */,
-/* 68 */,
-/* 69 */,
-/* 70 */,
-/* 71 */,
-/* 72 */,
-/* 73 */,
-/* 74 */
+
+/***/ 86:
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -1147,7 +1110,8 @@ module.exports = {
 };
 
 /***/ }),
-/* 75 */
+
+/***/ 87:
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -1244,13 +1208,14 @@ module.exports = {
 };
 
 /***/ }),
-/* 76 */,
-/* 77 */
+
+/***/ 89:
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(31);
 
 
 /***/ })
-],[77]);
+
+},[89]);
 //# sourceMappingURL=bundle.js.map
