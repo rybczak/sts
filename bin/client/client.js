@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const $ = require("jquery");
 const io = require("socket.io-client");
 const r = require("./map/renderer");
 const _entities_1 = require("../common/entities/_entities");
@@ -41,3 +42,26 @@ class Client {
 }
 exports.Client = Client;
 var client = new Client();
+$(document).ready(function () {
+    var trigger = $('.hamburger'), overlay = $('.overlay'), isClosed = false;
+    trigger.click(function () {
+        hamburger_cross();
+    });
+    function hamburger_cross() {
+        if (isClosed == true) {
+            overlay.hide();
+            trigger.removeClass('is-open');
+            trigger.addClass('is-closed');
+            isClosed = false;
+        }
+        else {
+            overlay.show();
+            trigger.removeClass('is-closed');
+            trigger.addClass('is-open');
+            isClosed = true;
+        }
+    }
+    $('[data-toggle="offcanvas"]').click(function () {
+        $('#wrapper').toggleClass('toggled');
+    });
+});

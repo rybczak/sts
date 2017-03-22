@@ -16,124 +16,107 @@
 </head>
 
 <body>
-    <div class="container">
-        <nav class="navbar navbar-default navbar-fixed-top" style="background-color:rgba(16, 99, 148, 0.9) !important">
-            <div class="container">
-                <div class="row">
-                    <div class="site-navigation-inner col-sm-12">
-                        <div class="navbar-header">
-                            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
-                                aria-controls="navbar">
-                                <span class="sr-only">Toggle navigation</span>
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                                </button>
-                                <div style="line-height: 76px">
-                                    <a href="http://staro.sarmacja.org/">
-                                        <img src="img/naglowek.gif" alt="Starosarmacja">
-                                    </a>
-                                    <span style="color:white">
-                                    Beta serwer
-                                </span>
-                                </div>
-                        </div>
-                        <div id="navbar" class="collapse navbar-collapse">
-                            <ul class="nav navbar-nav navbar-right">
-                                <li class="dropdown">
-                                    <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" href="#">Nazwa uzytkownika <i class="fa fa-caret-down" aria-hidden="true"></i>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-inverse black-nav">
+        <div class="site-navigation-inner col-md-12">
+            <div class="navbar-header">
+                <button type="button" class="hamburger is-closed animated fadeInLeft" data-toggle="offcanvas">
+                    <span class="hamb-top"></span>
+                    <span class="hamb-middle"></span>
+                    <span class="hamb-bottom"></span>
+                </button>
+                <a class="navbar-brand" style="margin-left:75px" href="#">STS - beta</a>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" href="#">Nazwa uzytkownika <i class="fa fa-caret-down" aria-hidden="true"></i>
 </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="#about">Opcja 1</a></li>
-                                        <li><a href="#contact">Opcja 2</a></li>
-                                        <li class="divider"></li>
-                                        <li><a href="#contact">Wyloguj</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </div>
-                        <!--/.nav-collapse -->
-                    </div>
-                </div>
+                        <ul class="dropdown-menu">
+                            <li><a href="#about">Opcja 1</a></li>
+                            <li><a href="#contact">Opcja 2</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#contact">Wyloguj</a></li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
-        </nav>
-        <div class="main">
-            <div class="row">
-                <div class="col-lg-4">
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
-                            <div class="row">
-                                <div class="col-xs-3">
-                                    <i class="fa fa-comments-o fa-5x"></i>
-                                </div>
-                                <div class="col-xs-9 text-right">
-                                    <div class="huge">Info 1</div>
-                                    <div>Rozrzeszenie info 1</div>
-                                </div>
-                            </div>
-                        </div>
-                        <a class="text-info" href="#">
-                            <div class="panel-footer">
-                                <span class="pull-left">Link info 1</span>
-                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                                <div class="clearfix"></div>
-                            </div>
-                        </a>
-                    </div>
-                    <!-- ./panel -->
-                </div>
-                <!-- ./col -->
-                <div class="col-lg-4">
-                    <div class="panel panel-warning">
-                        <div class="panel-heading">
-                            <div class="row">
-                                <div class="col-xs-3">
-                                    <i class="fa fa-tasks fa-5x"></i>
-                                </div>
-                                <div class="col-xs-9 text-right">
-                                    <div class="huge">Info 2</div>
-                                    <div>Rozrzeszenie info 2</div>
-                                </div>
-                            </div>
-                        </div>
-                        <a class="text-warning" href="#">
-                            <div class="panel-footer">
-                                <span class="pull-left">Link info 2</span>
-                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                                <div class="clearfix"></div>
-                            </div>
-                        </a>
-                    </div>
-                    <!-- ./panel -->
-                </div>
-                <!-- ./col -->
-                <div class="col-lg-4">
-                    <div class="panel panel-danger">
-                        <div class="panel-heading">
-                            <div class="row">
-                                <div class="col-xs-3">
-                                    <i class="fa fa-exclamation fa-5x"></i>
-                                </div>
-                                <div class="col-xs-9 text-right">
-                                    <div class="huge">Info 3</div>
-                                    <div>Rozszerzenie info 3</div>
-                                </div>
-                            </div>
-                        </div>
-                        <a class="text-danger" href="#">
-                            <div class="panel-footer">
-                                <span class="pull-left">Link info 3</span>
-                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                                <div class="clearfix"></div>
-                            </div>
-                        </a>
-                    </div>
-                    <!-- ./panel -->
-                </div>
-                <!-- ./col -->
-            </div>
-            <!-- ./row -->
-            <div class="row">
+        </div>
+    </nav>
+
+    <div class="container">
+        <div id="wrapper">
+            <div class="overlay"></div>
+            <nav class="navbar navbar-inverse navbar-fixed-top black-nav" id="sidebar-wrapper" role="navigation" style="margin-top: 64px">
+                <ul class="nav sidebar-nav scrollable">
+                    <li class="dropdown-header text-center">Opcje użytkownika</li>
+                    <li class="dropdown text-center">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user fa-4x"></i></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li class="dropdown-header text-center">Zarządzanie postacią</li>
+                            <li><a href="#">Ekwipunek</a></li>
+                            <li><a href="#">Statystyki</a></li>
+                            <li><a href="#">Edytor wyglądu</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown text-center">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-home fa-4x"></i></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li class="dropdown-header text-center">Zarządzanie domem</li>
+                            <li><a href="#">Podgląd</a></li>
+                            <li><a href="#">Panel rozbudowy</a></li>
+                            <li><a href="#">Edytor wyglądu</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown text-center">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-university fa-4x"></i></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li class="dropdown-header text-center">Zarządzanie finansami</li>
+                            <li><a href="#">Moje konta</a></li>
+                            <li><a href="#">Wykonaj przelew</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown text-center">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-shopping-basket fa-4x"></i></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li class="dropdown-header text-center">Giełda towarów</li>
+                            <li><a href="#">Giełda materiałowa</a></li>
+                            <li><a href="#">Giełda rolna</a></li>
+                            <li><a href="#">Giełda turystyczna</a></li>
+                            <li><a href="#">Aukcje ekwipunku</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown text-center">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-envelope fa-4x"></i></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li class="dropdown-header text-center">Poczta</li>
+                            <li><a href="#">Skrzynka odbiorcza</a></li>
+                            <li><a href="#">Skrzynka nadawcza</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown-header text-center">Opcje namiestnika</li>
+                    <li class="dropdown text-center">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-building fa-4x"></i></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li class="dropdown-header text-center">Zarządzanie infrastrukturą</li>
+                            <li><a href="#">Rozbuduj miasto</a></li>
+                            <li><a href="#">Rozbuduj drogi/kolej</a></li>
+                            <li><a href="#">Rozbuduj przemysł</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown text-center">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-file-text fa-4x"></i></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li class="dropdown-header text-center">Zarządzanie prawem</li>
+                            <li><a href="#">Ustaw podatek</a></li>
+                            <li><a href="#">Nadaj obywatelstwo</a></li>
+                            <li><a href="#">Nadaj odznaczenie</a></li>
+                            <li><a href="#">Przekaż wsparcie polityczne</a></li>
+                            <li><a href="#">Wnoskuj o wsparcie polityczne</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+            <div class="main">
                 <div class="col-md-12">
                     <canvas id="canvas" width="980" height="528" style="width: 100%;
   height: auto;"></canvas>
@@ -149,6 +132,7 @@
 
     <script type="text/javascript" src="js/vendor.bundle.js"></script>
     <script type="text/javascript" src="js/bundle.js"></script>
+
 </body>
 
 </html>
