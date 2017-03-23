@@ -91,13 +91,14 @@ $(document).ready(function () {
             isClosed = true;
         }
     }
+});
+
+$(document).ready(function () {
 
     $('[data-toggle="offcanvas"]').click(function () {
         $("#wrapper").toggleClass("toggled");
     });
-});
 
-$(document).ready(function () {
     var $chatbox = $(".chatbox"),
         $chatboxTitle = $(".chatbox-title"),
         $chatboxTitleClose = $(".chatbox-title-close");
