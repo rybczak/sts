@@ -21,6 +21,9 @@ body {
 .nav-color {
   background: #106394;
 }
+.nav-color1 {
+  background: #3f82a9;
+}
 .scrollable {
   overflow-y: scroll;
   max-height: 600px;
