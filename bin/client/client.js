@@ -65,3 +65,13 @@ $(document).ready(function () {
         $('#wrapper').toggleClass('toggled');
     });
 });
+$(document).ready(function () {
+    var $chatbox = $('.chatbox'), $chatboxTitle = $('.chatbox-title'), $chatboxTitleClose = $('.chatbox-title-close');
+    $chatboxTitle.on('click', function () {
+        $chatbox.toggleClass('chatbox-tray');
+    });
+    $chatbox.on('transitionend', function () {
+        if ($chatbox.hasClass('chatbox-closed'))
+            $chatbox.remove();
+    });
+});
