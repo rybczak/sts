@@ -69,8 +69,8 @@ export class Client {
 var client = new Client();
 
 $(document).ready(function () {
-    var trigger = $('.hamburger'),
-        overlay = $('.overlay'),
+    var trigger = $(".hamburger"),
+        overlay = $(".overlay"),
         isClosed = false;
 
     trigger.click(function () {
@@ -79,34 +79,34 @@ $(document).ready(function () {
 
     function hamburger_cross() {
 
-        if (isClosed == true) {
+        if (isClosed === true) {
             overlay.hide();
-            trigger.removeClass('is-open');
-            trigger.addClass('is-closed');
+            trigger.removeClass("is-open");
+            trigger.addClass("is-closed");
             isClosed = false;
         } else {
             overlay.show();
-            trigger.removeClass('is-closed');
-            trigger.addClass('is-open');
+            trigger.removeClass("is-closed");
+            trigger.addClass("is-open");
             isClosed = true;
         }
     }
 
     $('[data-toggle="offcanvas"]').click(function () {
-        $('#wrapper').toggleClass('toggled');
+        $("#wrapper").toggleClass("toggled");
     });
 });
 
 $(document).ready(function () {
-    var $chatbox = $('.chatbox'),
-        $chatboxTitle = $('.chatbox-title'),
-        $chatboxTitleClose = $('.chatbox-title-close');
+    var $chatbox = $(".chatbox"),
+        $chatboxTitle = $(".chatbox-title"),
+        $chatboxTitleClose = $(".chatbox-title-close");
 
-    $chatboxTitle.on('click', function () {
-        $chatbox.toggleClass('chatbox-tray');
+    $chatboxTitle.on("click", function () {
+        $chatbox.toggleClass("chatbox-tray");
     });
 
-    $chatbox.on('transitionend', function () {
-        if ($chatbox.hasClass('chatbox-closed')) $chatbox.remove();
+    $chatbox.on("transitionend", function () {
+        if ($chatbox.hasClass("chatbox-closed")) { $chatbox.remove(); };
     });
 });

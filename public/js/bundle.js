@@ -135,44 +135,38 @@ var Client = (function () {
 exports.Client = Client;
 var client = new Client();
 $(document).ready(function () {
-    var trigger = $('.hamburger'), overlay = $('.overlay'), isClosed = false;
+    var trigger = $(".hamburger"), overlay = $(".overlay"), isClosed = false;
     trigger.click(function () {
         hamburger_cross();
     });
     function hamburger_cross() {
-        if (isClosed == true) {
+        if (isClosed === true) {
             overlay.hide();
-            trigger.removeClass('is-open');
-            trigger.addClass('is-closed');
+            trigger.removeClass("is-open");
+            trigger.addClass("is-closed");
             isClosed = false;
         }
         else {
             overlay.show();
-            trigger.removeClass('is-closed');
-            trigger.addClass('is-open');
+            trigger.removeClass("is-closed");
+            trigger.addClass("is-open");
             isClosed = true;
         }
     }
     $('[data-toggle="offcanvas"]').click(function () {
-        $('#wrapper').toggleClass('toggled');
+        $("#wrapper").toggleClass("toggled");
     });
 });
 $(document).ready(function () {
-    var $chatbox = $('.chatbox'), $chatboxTitle = $('.chatbox-title'), $chatboxTitleClose = $('.chatbox-title-close'), $chatboxCredentials = $('.chatbox-credentials');
-    $chatboxTitle.on('click', function () {
-        $chatbox.toggleClass('chatbox-tray');
+    var $chatbox = $(".chatbox"), $chatboxTitle = $(".chatbox-title"), $chatboxTitleClose = $(".chatbox-title-close");
+    $chatboxTitle.on("click", function () {
+        $chatbox.toggleClass("chatbox-tray");
     });
-    $chatboxTitleClose.on('click', function (e) {
-        e.stopPropagation();
-        $chatbox.addClass('chatbox-closed');
-    });
-    $chatbox.on('transitionend', function () {
-        if ($chatbox.hasClass('chatbox-closed'))
+    $chatbox.on("transitionend", function () {
+        if ($chatbox.hasClass("chatbox-closed")) {
             $chatbox.remove();
-    });
-    $chatboxCredentials.on('submit', function (e) {
-        e.preventDefault();
-        $chatbox.removeClass('chatbox-empty');
+        }
+        ;
     });
 });
 
