@@ -99,15 +99,11 @@ $(document).ready(function () {
         $("#wrapper").toggleClass("toggled");
     });
 
-    var $chatbox = $(".chatbox"),
-        $chatboxTitle = $(".chatbox-title"),
-        $chatboxTitleClose = $(".chatbox-title-close");
-
-    $chatboxTitle.on("click", function () {
-        $chatbox.toggleClass("chatbox-tray");
+    $(".chatbox-title").on("click", function () {
+        $(".chatbox").toggleClass("chatbox-tray");
     });
 
-    $chatbox.on("transitionend", function () {
-        if ($chatbox.hasClass("chatbox-closed")) { $chatbox.remove(); };
+    $(".chatbox").on("transitionend", function () {
+        if ($(".chatbox").hasClass("chatbox-closed")) { $(".chatbox").remove(); };
     });
 });
