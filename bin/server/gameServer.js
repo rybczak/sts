@@ -30,5 +30,9 @@ class GameServer {
         }
         return result;
     }
+    getPlayersNumber() {
+        var self = this;
+        return self.players.values().length;
+    }
 }
 exports.GameServer = GameServer;

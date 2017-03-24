@@ -46,4 +46,9 @@ export class GameServer {
 
         return result;
     }
+
+    getPlayersNumber() : number {
+        var self = this;
+        return self.players.values().length;
+    }
 }

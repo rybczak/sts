@@ -113,8 +113,10 @@ var Client = (function () {
         }.bind(this));
         self.socket.on("onconnected", function (result) {
             self.player.updatePlayerData(result.player);
+            $(".online-counter").text(result.online);
         });
         self.socket.on("update", function (result) {
+            $(".online-counter").text(result.online);
             var currentPlayerIndex = -1;
             for (var x = 0; x < result.data.length; x++) {
                 var player = result.data[x];
@@ -126,6 +128,29 @@ var Client = (function () {
             result.data.splice(currentPlayerIndex, 1);
             self.otherPlayers = result.data;
             self.renderer.updateWorldInformation(self.otherPlayers);
+        });
+        $(".chatbox-message").on("keyup", function (event) {
+            if (event.keyCode === 13 && !event.shiftKey) {
+                var message = $(".chatbox-message").val();
+                $(".chatbox-message").val("");
+                $(".chatbox-body")[0].innerHTML += "<div class=\"chatbox-body-message chatbox-body-message-left\">" +
+                    "<img src=\"https://s3.amazonaws.com/uifaces/faces/twitter/brad_frost/128.jpg\" alt=\"Picture\"><p>" + message + "</p></div>";
+                $(".chatbox-body").scrollTop($(".chatbox-body")[0].scrollHeight);
+                self.socket.emit("chatMessage", { message: message, user: self.player.getPlayerData().name });
+            }
+        });
+        self.socket.on("online", function (data) {
+            $(".chatbox-body")[0].innerHTML += data.name + " jest online<br>";
+            $(".chatbox-body").scrollTop($(".chatbox-body")[0].scrollHeight);
+        });
+        self.socket.on("offline", function (data) {
+            $(".chatbox-body")[0].innerHTML += data.name + " jest offline<br>";
+            $(".chatbox-body").scrollTop($(".chatbox-body")[0].scrollHeight);
+        });
+        self.socket.on("chatMessage", function (data) {
+            $(".chatbox-body")[0].innerHTML += "<div class=\"chatbox-body-message chatbox-body-message-right\">" +
+                "<img src=\"https://s3.amazonaws.com/uifaces/faces/twitter/arashmil/128.jpg\" alt=\"Picture\"><p>" + data.message + "<br><span style=\"font-size:10px\">" + data.user + "</span></p></div>";
+            $(".chatbox-body").scrollTop($(".chatbox-body")[0].scrollHeight);
         });
         self.renderer = new r.MapRenderer.Renderer(self.player, self.otherPlayers);
         self.renderer.init(document.getElementById("canvas"));
@@ -155,7 +180,7 @@ $(document).ready(function () {
     }
 });
 $(document).ready(function () {
-    $('[data-toggle="offcanvas"]').click(function () {
+    $("[data-toggle=\"offcanvas\"]").click(function () {
         $("#wrapper").toggleClass("toggled");
     });
     $(".chatbox-title").on("click", function () {

@@ -22,7 +22,9 @@ sio.sockets.on('connection', function (client) {
     var newPlayer = gameServer.addNewPlayer(client.userid);
     var requests = [];
 
-    client.emit('onconnected', { player: newPlayer, timestamp: Date.now() });
+    client.broadcast.emit("online", { name: newPlayer.name });
+
+    client.emit('onconnected', { player: newPlayer, timestamp: Date.now(), online: gameServer.getPlayersNumber() });
     //game on client connect behaviour
     console.log('\t :: socket.io :: player ' + client.userid + ' connected');
 
@@ -33,7 +35,12 @@ sio.sockets.on('connection', function (client) {
         gameServer.movePlayer(msg.date, msg.sequence, msg.id, msg.move);
     });
 
+    client.on('chatMessage', function (data) {
+        client.broadcast.emit("chatMessage", { message: data.message, user: data.user });
+    });
+
     client.on('disconnect', function () {
+        client.broadcast.emit("offline", { name: newPlayer.name });
         gameServer.removePlayer(client.userid);
         console.log('\t :: socket.io :: player ' + client.userid + ' disconnected');
     });
@@ -41,6 +48,6 @@ sio.sockets.on('connection', function (client) {
 
 setInterval(function () {
     var data = gameServer.getData();
-    sio.sockets.emit('update', { data: data, timestamp: Date.now() });
+    sio.sockets.emit('update', { data: data, timestamp: Date.now(), online: gameServer.getPlayersNumber() });
     console.log('\t :: socket.io :: update');
 }, 100);
