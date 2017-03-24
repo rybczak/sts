@@ -1164,7 +1164,7 @@ module.exports = {
 	"screenHeight": 528,
 	"screenWidth": 980,
 	"viewPortHeight": 528,
-	"viewPortWidth": 624,
+	"viewPortWidth": 816,
 	"movementSize": 48,
 	"menuTileSize": 40
 };
